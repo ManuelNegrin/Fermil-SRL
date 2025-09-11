@@ -62,14 +62,16 @@ function Home() {
             <Card.Body>
               <Card.Title>🚛 Viajes Activos</Card.Title>
               <Card.Text>
-                <span className="text-bold">
+                <div className="text-bold">
                   Cantidad de viajes actualmente en curso: <strong>12</strong>
-                </span>
+                </div>
+                <br />
                 <ul className="list-group list-group-flush">
                   {viajesActivos.map((viaje) => (
-                    <li key={viaje.id} className="list-group-item">
-                      {viaje.destino} - Chofer: {viaje.chofer} - Fecha de
-                      Entrada: {viaje.fechaEntrada}
+                    <li key={viaje.id} className="list-group-item p-0">
+                      <div className="fw-bold">{viaje.destino}</div>
+                      <span>Fecha de Entrada: {viaje.fechaEntrada}</span>
+                      <span>Chofer: {viaje.chofer}</span>
                     </li>
                   ))}
                 </ul>
@@ -88,7 +90,7 @@ function Home() {
                 </span>
                 <ul className="list-group list-group-flush">
                   {remolquesLibres.map((remolque) => (
-                    <li key={remolque.id} className="list-group-item">
+                    <li key={remolque.id} className="list-group-item p-0">
                       {remolque.matricula} - {remolque.tipo} - Estado:{" "}
                       {remolque.estado}
                     </li>
