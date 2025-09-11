@@ -1,18 +1,41 @@
 import { Card } from "react-bootstrap";
 
 function Home() {
-  const viajesActivos = [
+  const viajes = [
     {
       id: 1,
       destino: "Montevideo-Melo",
       chofer: "Juan Perez",
       fechaEntrada: "2025-10-01",
+      estado: "Activo",
     },
     {
       id: 2,
-      destino: "Montevideo-Colonia",
-      chofer: "Juan Perez",
+      destino: "Montevideo-Salto",
+      chofer: "Raul Gomez",
       fechaEntrada: "2025-10-01",
+      estado: "Activo",
+    },
+    {
+      id: 3,
+      destino: "Montevideo-Colonia",
+      chofer: "Pedro Gonzalez",
+      fechaEntrada: "2025-10-01",
+      estado: "Finalizado",
+    },
+    {
+      id: 4,
+      destino: "Montevideo-Melo",
+      chofer: "Juan Gomez",
+      fechaEntrada: "2025-10-01",
+      estado: "Activo",
+    },
+    {
+      id: 5,
+      destino: "Montevideo-Tacuarembó",
+      chofer: "Federico Pintos",
+      fechaEntrada: "2025-10-01",
+      estado: "Finalizado",
     },
   ];
 
@@ -63,17 +86,23 @@ function Home() {
               <Card.Title>🚛 Viajes Activos</Card.Title>
               <Card.Text>
                 <div className="text-bold">
-                  Cantidad de viajes actualmente en curso: <strong>12</strong>
+                  Cantidad de viajes actualmente en curso:{" "}
+                  <strong>
+                    {viajes.filter((viaje) => viaje.estado === "Activo").length}
+                  </strong>
                 </div>
                 <br />
                 <ul className="list-group list-group-flush">
-                  {viajesActivos.map((viaje) => (
-                    <li key={viaje.id} className="list-group-item p-0">
-                      <div className="fw-bold">{viaje.destino}</div>
-                      <span>Fecha de Entrada: {viaje.fechaEntrada}</span>
-                      <span>Chofer: {viaje.chofer}</span>
-                    </li>
-                  ))}
+                  {viajes
+                    .filter((viaje) => viaje.estado === "Activo")
+                    .map((viaje) => (
+                      <li key={viaje.id} className="list-group-item p-0 pt-1">
+                        <div className="fw-bold">{viaje.destino}</div>
+                        <span>Fecha de Entrada: {viaje.fechaEntrada}</span>
+                        <br />
+                        <span>Chofer: {viaje.chofer}</span>
+                      </li>
+                    ))}
                 </ul>
               </Card.Text>
             </Card.Body>
@@ -89,10 +118,13 @@ function Home() {
                   Total disponibles: <strong>8</strong>
                 </span>
                 <ul className="list-group list-group-flush">
+                  <br />
                   {remolquesLibres.map((remolque) => (
-                    <li key={remolque.id} className="list-group-item p-0">
-                      {remolque.matricula} - {remolque.tipo} - Estado:{" "}
-                      {remolque.estado}
+                    <li key={remolque.id} className="list-group-item p-0 pt-1">
+                      <div className="fw-bold">
+                        {remolque.matricula} - {remolque.tipo}
+                      </div>
+                      Estado: {remolque.estado}
                     </li>
                   ))}
                 </ul>
@@ -106,12 +138,10 @@ function Home() {
             <Card.Body>
               <Card.Title>⛽ Consumo de Combustible</Card.Title>
               <Card.Text>
-                <span>
-                  Promedio mensual: <strong>2.300 L</strong>
-                </span>
+                <br />
                 <ul className="list-group list-group-flush">
                   {consumoCamiones.map((camion) => (
-                    <li key={camion.id} className="list-group-item">
+                    <li key={camion.id} className="list-group-item p-0 pt-1">
                       {camion.matricula} - Promedio: {camion.promedio}
                     </li>
                   ))}
@@ -125,9 +155,13 @@ function Home() {
           <Card className="h-100 shadow-sm">
             <Card.Body>
               <Card.Title>🔧 Unidades en Taller</Card.Title>
+              <br />
               <ul className="list-group list-group-flush">
                 {camionesTaller.map((camionesTaller) => (
-                  <li key={camionesTaller.id} className="list-group-item">
+                  <li
+                    key={camionesTaller.id}
+                    className="list-group-item p-0 pt-1"
+                  >
                     {camionesTaller.matricula} — {camionesTaller.motivo}
                   </li>
                 ))}

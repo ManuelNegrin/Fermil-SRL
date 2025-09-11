@@ -9,6 +9,7 @@ import OrdenesTaller from "./components/OrdenesTaller";
 import Consumos from "./components/Consumos";
 import Choferes from "./components/Choferes";
 import Viajes from "./components/Viajes";
+import NuevoViaje from "./components/NuevoViajeForm";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="vehiculos" element={<Vehiculos />} />
           <Route path="viajes" element={<Viajes />} />
+          <Route path="viajes/nuevoViaje" element={<NuevoViaje />} />
           <Route path="choferes" element={<Choferes />} />
           <Route path="consumos" element={<Consumos />} />
           <Route path="ordenesTaller" element={<OrdenesTaller />} />
