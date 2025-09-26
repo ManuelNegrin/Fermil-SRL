@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 function Vehiculos() {
-  const [filtro, setFiltro] = useState("Activo");
+  const [filtro, setFiltro] = useState("Todos");
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState(null);
 
   const vehiculos = [
@@ -59,7 +59,9 @@ function Vehiculos() {
   const vehiculosFiltrados = vehiculos.filter((vehiculo) =>
     filtro === "Camiones"
       ? vehiculo.tipo === "Camion"
-      : vehiculo.tipo === "Remolque"
+      : vehiculo.tipo === "Remolques"
+      ? vehiculo.tipo === "Remolque"
+      : true
   );
 
   return (
@@ -71,6 +73,14 @@ function Vehiculos() {
         <div className="d-flex">
           <button
             className={`btn me-2 ${
+              filtro === "Todos" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => setFiltro("Todos")}
+          >
+            Todos
+          </button>
+          <button
+            className={`btn me-2 ${
               filtro === "Camiones" ? "btn-primary" : "btn-outline-primary"
             }`}
             onClick={() => setFiltro("Camiones")}
@@ -79,7 +89,7 @@ function Vehiculos() {
           </button>
           <button
             className={`btn me-2 ${
-              filtro === "Remolques" ? "btn-secondary" : "btn-outline-secondary"
+              filtro === "Remolques" ? "btn-primary" : "btn-outline-primary"
             }`}
             onClick={() => setFiltro("Remolques")}
           >
@@ -102,7 +112,7 @@ function Vehiculos() {
             onClick={() => toggleSeleccion(vehiculo.id)}
             style={{ cursor: "pointer" }}
           >
-            <strong>{vehiculo.matricula}</strong> — {vehiculo.chofer}
+            <strong>{vehiculo.matricula}</strong>
             {vehiculoSeleccionado === vehiculo.id && (
               <div className="mt-2 text-muted">
                 <p>
@@ -110,6 +120,10 @@ function Vehiculos() {
                 </p>
                 <p>
                   <strong>Matricula:</strong> {vehiculo.matricula}
+                </p>
+                <p>
+                  <strong>Chofer:</strong> {vehiculo.chofer}{" "}
+                  {!vehiculo.chofer && "---"}
                 </p>
                 <p>
                   <strong>Modelo:</strong> {vehiculo.modelo}
