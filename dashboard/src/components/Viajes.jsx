@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 function Viajes() {
   const [filtro, setFiltro] = useState("Activo");
