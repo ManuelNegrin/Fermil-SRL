@@ -44,7 +44,9 @@ function Viajes() {
     },
   ];
 
-  const viajesFiltrados = viajes.filter((viaje) => viaje.estado === filtro);
+  const viajesFiltrados = viajes.filter((viaje) =>
+    filtro === "Todo" ? true : viaje.estado === filtro
+  );
 
   const toggleSeleccion = (id) => {
     setViajeSeleccionado(viajeSeleccionado === id ? null : id);
@@ -74,6 +76,14 @@ function Viajes() {
             onClick={() => setFiltro("Finalizado")}
           >
             Finalizados
+          </button>
+          <button
+            className={`btn me-2 ${
+              filtro === "Todo" ? "btn-secondary" : "btn-outline-secondary"
+            }`}
+            onClick={() => setFiltro("Todo")}
+          >
+            Todos
           </button>
         </div>
         <button

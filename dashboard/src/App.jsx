@@ -10,6 +10,7 @@ import Consumos from "./components/Consumos";
 import Choferes from "./components/Choferes";
 import Viajes from "./components/Viajes";
 import NuevoViaje from "./components/NuevoViajeForm";
+import OrdenDetalle from "./components/OrdenDetalle";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="choferes" element={<Choferes />} />
           <Route path="consumos" element={<Consumos />} />
           <Route path="ordenesTaller" element={<OrdenesTaller />} />
+          <Route path="ordenesTaller/:id" element={<OrdenDetalle />} />
           <Route path="adminPanel" element={<AdminPanel />} />
         </Route>
       </Routes>

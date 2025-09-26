@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 function Choferes() {
   const [filtro, setFiltro] = useState("Todos");
   const [choferSeleccionado, setChoferSeleccionado] = useState(null);
@@ -5,48 +7,36 @@ function Choferes() {
   const choferes = [
     {
       id: 1,
-      tipo: "Camion",
-      matricula: "ACD1234",
-      chofer: "Juan Perez",
-      modelo: "Internacional 430",
+      nombre: "Juan",
+      apellido: "Perez",
+      ci: "3.456.456-7",
+      telefono: "098752345",
+      fechaNacimiento: "10/05/1980",
+      fechaLibreta: "10/09/2026",
       estado: "Disponible",
+      vehiculo: "ACD1234",
     },
     {
       id: 2,
-      tipo: "Camion",
-      matricula: "BCD5678",
-      chofer: "Raul Gomez",
-      modelo: "VW Constellation 19.320",
-      estado: "En Reparacion",
+      nombre: "Raul",
+      apellido: "Gomez",
+      ci: "5.678.678-9",
+      telefono: "098752345",
+      fechaNacimiento: "10/08/1978",
+      fechaLibreta: "18/02/2029",
+      estado: "En viaje",
+      vehiculo: "BCD5678",
     },
     {
       id: 3,
-      tipo: "Remolque",
-      matricula: "ATP4008",
-      modelo: "Araña 40",
+      nombre: "Federico",
+      apellido: "Gutierrez",
+      ci: "4.567.567-8",
+      telefono: "098752345",
+      fechaNacimiento: "10/08/1978",
+      fechaLibreta: "18/02/2029",
       estado: "Disponible",
-    },
-    {
-      id: 4,
-      tipo: "Remolque",
-      matricula: "ATP4009",
-      modelo: "Araña 40",
-      estado: "En Uso",
-    },
-    {
-      id: 5,
-      tipo: "Camion",
-      matricula: "CDE6789",
-      chofer: "Pedro Gonzalez",
-      modelo: "Scania R450",
-      estado: "Disponible",
-    },
-    {
-      id: 6,
-      tipo: "Remolque",
-      matricula: "ATP4010",
-      modelo: "Camara",
-      estado: "Disponible",
+      vehiculo: "CDE6789",
     },
   ];
 
@@ -55,17 +45,19 @@ function Choferes() {
   };
 
   const choferesFiltrados = choferes.filter((chofer) =>
-    filtro === "Camiones"
-      ? vehiculo.tipo === "Camion"
-      : vehiculo.tipo === "Remolques"
-      ? vehiculo.tipo === "Remolque"
+    filtro === "Disponibles"
+      ? chofer.estado === "Disponible"
+      : filtro === "En viaje"
+      ? chofer.estado === "En viaje"
+      : filtro === "Licencia"
+      ? chofer.estado === "Licencia"
       : true
   );
 
   return (
     <div className="mx-4" style={{ width: "100%" }}>
       <div className="d-flex justify-content-between align-items-center mt-4 mb-3">
-        <h2 className="mb-4">choferes</h2>
+        <h2 className="mb-4">Choferes</h2>
       </div>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div className="d-flex">
@@ -79,52 +71,58 @@ function Choferes() {
           </button>
           <button
             className={`btn me-2 ${
-              filtro === "Camiones" ? "btn-primary" : "btn-outline-primary"
+              filtro === "Disponibles" ? "btn-primary" : "btn-outline-primary"
             }`}
-            onClick={() => setFiltro("Camiones")}
+            onClick={() => setFiltro("Disponibles")}
           >
-            Camiones
+            Disponibles
           </button>
           <button
             className={`btn me-2 ${
-              filtro === "Remolques" ? "btn-primary" : "btn-outline-primary"
+              filtro === "En viaje" ? "btn-primary" : "btn-outline-primary"
             }`}
-            onClick={() => setFiltro("Remolques")}
+            onClick={() => setFiltro("En viaje")}
           >
-            Remolques
+            En viaje
           </button>
         </div>
         <button
           className="btn btn-success ms-auto"
-          onClick={() => navigate("/vehiculos/nuevovehiculo")}
+          onClick={() => navigate("/choferes/nuevoChofer")}
         >
-          Nuevo Vehiculo
+          Nuevo Chofer
         </button>
       </div>
 
       <ul className="list-group">
-        {choferesFiltrados.map((vehiculo) => (
+        {choferesFiltrados.map((chofer) => (
           <li
-            key={vehiculo.id}
+            key={chofer.id}
             className="list-group-item"
-            onClick={() => toggleSeleccion(vehiculo.id)}
+            onClick={() => toggleSeleccion(chofer.id)}
             style={{ cursor: "pointer" }}
           >
-            <strong>{vehiculo.matricula}</strong>
-            {choferSeleccionado === vehiculo.id && (
+            <strong>
+              {chofer.nombre} {chofer.apellido}
+            </strong>
+            {choferSeleccionado === chofer.id && (
               <div className="mt-2 text-muted">
                 <p>
-                  <strong>Estado:</strong> {vehiculo.estado}
+                  <strong>Documento:</strong> {chofer.ci}
                 </p>
                 <p>
-                  <strong>Matricula:</strong> {vehiculo.matricula}
+                  <strong>Telefono:</strong> {chofer.telefono}
                 </p>
                 <p>
-                  <strong>Chofer:</strong> {vehiculo.chofer}{" "}
-                  {!vehiculo.chofer && "---"}
+                  <strong>Vencimiento de libreta: </strong>
+                  {chofer.fechaLibreta}
                 </p>
                 <p>
-                  <strong>Modelo:</strong> {vehiculo.modelo}
+                  <strong>Vehículo asignado:</strong>{" "}
+                  {chofer.vehiculo || "Ninguno"}
+                </p>
+                <p>
+                  <strong>Estado:</strong> {chofer.estado}
                 </p>
               </div>
             )}
