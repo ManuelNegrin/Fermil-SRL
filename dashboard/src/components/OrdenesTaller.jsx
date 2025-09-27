@@ -92,9 +92,10 @@ function OrdenesTaller() {
               <h5 className="card-title">{orden.vehiculo}</h5>
               <p className="card-text">
                 <strong>Trabajo:</strong> {orden.trabajo} <br />
-                <strong>Fecha:</strong> {orden.fecha} <br />
+                <strong>Fecha Ingreso:</strong> {orden.fechaIngreso} <br />
+                <strong>Fecha Salida:</strong> {orden.fechaEgreso} <br />
                 <strong>Estado:</strong> {orden.estado} <br />
-                <strong>Costo:</strong> {orden.observaciones}
+                <strong>Observaciones:</strong> {orden.observaciones}
               </p>
             </div>
           </div>
