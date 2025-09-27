@@ -11,6 +11,7 @@ function Viajes() {
       id: 1,
       destino: "Montevideo-Melo",
       chofer: "Juan Perez",
+      fechaCarga: "2025-09-30",
       fechaEntrada: "2025-10-01",
       estado: "Activo",
     },
@@ -18,6 +19,7 @@ function Viajes() {
       id: 2,
       destino: "Montevideo-Salto",
       chofer: "Raul Gomez",
+      fechaCarga: "2025-09-30",
       fechaEntrada: "2025-10-01",
       estado: "Activo",
     },
@@ -25,6 +27,7 @@ function Viajes() {
       id: 3,
       destino: "Montevideo-Colonia",
       chofer: "Pedro Gonzalez",
+      fechaCarga: "2025-09-30",
       fechaEntrada: "2025-10-01",
       estado: "Finalizado",
     },
@@ -32,6 +35,7 @@ function Viajes() {
       id: 4,
       destino: "Montevideo-Melo",
       chofer: "Juan Gomez",
+      fechaCarga: "2025-09-30",
       fechaEntrada: "2025-10-01",
       estado: "Activo",
     },
@@ -39,6 +43,7 @@ function Viajes() {
       id: 5,
       destino: "Montevideo-Tacuarembó",
       chofer: "Federico Pintos",
+      fechaCarga: "2025-09-30",
       fechaEntrada: "2025-10-01",
       estado: "Finalizado",
     },
@@ -106,7 +111,10 @@ function Viajes() {
             {viajeSeleccionado === viaje.id && (
               <div className="mt-2 text-muted">
                 <p>
-                  <strong>Fecha:</strong> {viaje.fechaEntrada}
+                  <strong>Fecha Carga:</strong> {viaje.fechaCarga}
+                </p>
+                <p>
+                  <strong>Fecha Entrada:</strong> {viaje.fechaEntrada}
                 </p>
                 <p>
                   <strong>Camión:</strong> {viaje.camion}

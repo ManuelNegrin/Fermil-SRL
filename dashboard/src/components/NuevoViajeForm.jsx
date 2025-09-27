@@ -46,6 +46,18 @@ function NuevoViajeForm() {
         </div>
 
         <div className="mb-3">
+          <label className="form-label">Fecha de Carga</label>
+          <input
+            type="date"
+            className="form-control"
+            name="fechaCarga"
+            value={formData.fechaCarga}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
           <label className="form-label">Fecha de Entrada</label>
           <input
             type="date"
