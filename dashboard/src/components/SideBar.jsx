@@ -1,6 +1,6 @@
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
-function SideBar() {
+function SideBar({ expanded = true }) {
   // const dispatch = useDispatch();
 
   // const handleLogout = () => {
@@ -21,10 +21,15 @@ function SideBar() {
         style={{ color: "white", textDecoration: "none" }}
         className={"d-flex align-items-center justify-content-center mt-2"}
       >
-        <span className="fs-4 text-center fw-semibold company-logo d-none d-md-inline">
-          FERMIL SRL
-        </span>
-        <i className="bi bi-truck fs-3 d-md-none"></i>
+        {expanded ? (
+          <span className="fs-4 text-center fw-semibold company-logo d-none d-md-inline">
+            FERMIL SRL
+          </span>
+        ) : (
+          <span className="fs-4 text-center fw-semibold company-logo d-md-none">
+            F
+          </span>
+        )}
       </NavLink>
       <hr />
       <ul className="nav nav-pills flex-column mb-auto text-center">
@@ -38,7 +43,9 @@ function SideBar() {
             }
           >
             <i className="bi bi-kanban"></i>
-            <span className="d-none d-md-inline ms-2"> Resumen</span>
+            {expanded && (
+              <span className="d-none d-md-inline ms-2"> Resumen</span>
+            )}
           </NavLink>
         </li>
         <hr />
@@ -51,7 +58,9 @@ function SideBar() {
             }
           >
             <i className="bi bi-signpost-split"></i>
-            <span className="d-none d-md-inline ms-2"> Viajes</span>
+            {expanded && (
+              <span className="d-none d-md-inline ms-2"> Viajes</span>
+            )}
           </NavLink>
         </li>
         <hr />
@@ -64,7 +73,9 @@ function SideBar() {
             }
           >
             <i className="bi bi-truck"></i>
-            <span className="d-none d-md-inline ms-2"> Vehiculos</span>
+            {expanded && (
+              <span className="d-none d-md-inline ms-2"> Vehiculos</span>
+            )}
           </NavLink>
         </li>
         <hr />
@@ -77,7 +88,9 @@ function SideBar() {
             }
           >
             <i className="bi bi-people-fill"></i>
-            <span className="d-none d-md-inline ms-2"> Choferes</span>
+            {expanded && (
+              <span className="d-none d-md-inline ms-2"> Choferes</span>
+            )}
           </NavLink>
         </li>
         <hr />
@@ -90,7 +103,9 @@ function SideBar() {
             }
           >
             <i className="bi bi-fuel-pump"></i>
-            <span className="d-none d-md-inline ms-2"> Consumos</span>
+            {expanded && (
+              <span className="d-none d-md-inline ms-2"> Consumos</span>
+            )}
           </NavLink>
         </li>
         <hr />
@@ -103,7 +118,12 @@ function SideBar() {
             }
           >
             <i className="bi bi-tools"></i>
-            <span className="d-none d-md-inline ms-2"> Ordenes de taller</span>
+            {expanded && (
+              <span className="d-none d-md-inline ms-2">
+                {" "}
+                Ordenes de taller
+              </span>
+            )}
           </NavLink>
         </li>
         <hr />
@@ -116,7 +136,9 @@ function SideBar() {
             }
           >
             <i className="bi bi-gear-fill"></i>
-            <span className="d-none d-md-inline ms-2"> Admin Panel</span>
+            {expanded && (
+              <span className="d-none d-md-inline ms-2"> Admin Panel</span>
+            )}
           </NavLink>
         </li>
         <hr />
