@@ -56,21 +56,20 @@ function Vehiculos() {
     setVehiculoSeleccionado(vehiculoSeleccionado === id ? null : id);
   };
 
-  const vehiculosFiltrados = vehiculos.filter((vehiculo) =>
-    filtro === "Camiones"
-      ? vehiculo.tipo === "Camion"
-      : vehiculo.tipo === "Remolques"
-      ? vehiculo.tipo === "Remolque"
-      : true
-  );
+  const vehiculosFiltrados = vehiculos.filter((vehiculo) => {
+    if (filtro === "Camiones") return vehiculo.tipo === "Camion";
+    if (filtro === "Remolques") return vehiculo.tipo === "Remolque";
+    return true;
+  });
 
   return (
-    <div className="mx-4" style={{ width: "100%" }}>
+    <div className="p-0 m-0">
       <div className="d-flex justify-content-between align-items-center mt-4 mb-3">
         <h2 className="mb-4">Vehiculos</h2>
       </div>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <div className="d-flex">
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-2">
+        {/* botones de filtro desktop */}
+        <div className="d-none d-md-flex gap-2">
           <button
             className={`btn me-2 ${
               filtro === "Todos" ? "btn-primary" : "btn-outline-primary"
@@ -96,12 +95,49 @@ function Vehiculos() {
             Remolques
           </button>
         </div>
-        <button
-          className="btn btn-success ms-auto"
-          onClick={() => navigate("/vehiculos/nuevovehiculo")}
-        >
-          Nuevo Vehiculo
-        </button>
+        {/*Botones de filtro mobile */}
+        <div className="d-flex d-md-none flex-wrap gap-1 justify-content-between w-100">
+          <button
+            className={`btn btn-sm ${
+              filtro === "Todos" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => setFiltro("Todos")}
+          >
+            Todos
+          </button>
+          <button
+            className={`btn btn-sm ${
+              filtro === "Camiones" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => setFiltro("Camiones")}
+          >
+            Camiones
+          </button>
+          <button
+            className={`btn btn-sm ${
+              filtro === "Remolques" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => setFiltro("Remolques")}
+          >
+            Remolques
+          </button>
+        </div>
+        <div className="d-none d-md-flex">
+          <button
+            className="btn btn-success"
+            onClick={() => navigate("/vehiculos/nuevovehiculo")}
+          >
+            Nuevo Vehiculo
+          </button>
+        </div>
+        <div className="d-flex d-md-none w-100">
+          <button
+            className="btn btn-sm btn-success w-100 w-md-auto"
+            onClick={() => navigate("/vehiculos/nuevovehiculo")}
+          >
+            Nuevo Vehiculo
+          </button>
+        </div>
       </div>
 
       <ul className="list-group">

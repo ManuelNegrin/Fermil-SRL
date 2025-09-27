@@ -34,7 +34,7 @@ function OrdenesTaller() {
   ]);
 
   return (
-    <div className="mx-4" style={{ width: "100%" }}>
+    <div className="mx-3">
       <div className="d-flex justify-content-between align-items-center mt-4 mb-3">
         <h2 className="mb-4">Ordenes de Taller</h2>
         <button

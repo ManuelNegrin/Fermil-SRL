@@ -86,7 +86,7 @@ function Home() {
               <Card.Title>🚛 Viajes Activos</Card.Title>
               <Card.Text>
                 <div className="text-bold">
-                  Cantidad de viajes actualmente en curso:{" "}
+                  Cantidad de viajes en curso:{" "}
                   <strong>
                     {viajes.filter((viaje) => viaje.estado === "Activo").length}
                   </strong>
