@@ -2,15 +2,15 @@ import { useState } from "react";
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
-import Layout from "./components/Layout";
-import Vehiculos from "./components/Vehiculos";
-import AdminPanel from "./components/AdminPanel";
-import OrdenesTaller from "./components/OrdenesTaller";
-import Consumos from "./components/Consumos";
-import Choferes from "./components/Choferes";
-import Viajes from "./components/Viajes";
-import NuevoViaje from "./components/NuevoViajeForm";
-import OrdenDetalle from "./components/OrdenDetalle";
+import Layout from "./components/layout/Layout";
+import Vehiculos from "./components/features/vehiculos/Vehiculos";
+import AdminPanel from "./components/admin/AdminPanel";
+import OrdenesTaller from "./components/features/ordenes/OrdenesTaller";
+import Consumos from "./components/features/consumos/Consumos";
+import Choferes from "./components/features/choferes/Choferes";
+import Viajes from "./components/features/viajes/Viajes";
+import NuevoViaje from "./components/forms/NuevoViajeForm";
+import OrdenDetalle from "./components/features/ordenes/OrdenDetalle";
 
 function App() {
   return (
