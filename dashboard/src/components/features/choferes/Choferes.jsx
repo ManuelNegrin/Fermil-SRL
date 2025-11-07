@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Choferes() {
   const [filtro, setFiltro] = useState("Todos");
   const [choferSeleccionado, setChoferSeleccionado] = useState(null);
+  const navigate = useNavigate();
 
   const choferes = [
     {

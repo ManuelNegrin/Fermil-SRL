@@ -9,8 +9,11 @@ import OrdenesTaller from "./components/features/ordenes/OrdenesTaller";
 import Consumos from "./components/features/consumos/Consumos";
 import Choferes from "./components/features/choferes/Choferes";
 import Viajes from "./components/features/viajes/Viajes";
-import NuevoViaje from "./components/forms/NuevoViajeForm";
 import OrdenDetalle from "./components/features/ordenes/OrdenDetalle";
+import NuevoViaje from "./components/forms/NuevoViajeForm";
+import NuevoChofer from "./components/forms/NuevoChoferForm";
+import NuevoVehiculo from "./components/forms/NuevoVehiculoForm";
+
 
 function App() {
   return (
@@ -21,6 +24,8 @@ function App() {
           <Route path="vehiculos" element={<Vehiculos />} />
           <Route path="viajes" element={<Viajes />} />
           <Route path="viajes/nuevoViaje" element={<NuevoViaje />} />
+          <Route path="choferes/nuevoChofer" element={<NuevoChofer />} />
+          <Route path="vehiculos/nuevoVehiculo" element={<NuevoVehiculo />} />
           <Route path="choferes" element={<Choferes />} />
           <Route path="consumos" element={<Consumos />} />
           <Route path="ordenesTaller" element={<OrdenesTaller />} />
