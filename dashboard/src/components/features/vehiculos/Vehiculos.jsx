@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Vehiculos() {
   const [filtro, setFiltro] = useState("Todos");
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState(null);
+  const navigate = useNavigate();
 
   const vehiculos = [
     {
@@ -164,6 +166,28 @@ function Vehiculos() {
                 <p>
                   <strong>Modelo:</strong> {vehiculo.modelo}
                 </p>
+                <div className="d-none d-md-flex justify-content-end mt-2">
+                  <button
+                    className="btn btn-warning ms-auto"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/vehiculos/editar/${vehiculo.id}`);
+                    }}
+                  >
+                    Editar
+                  </button>
+                </div>
+                <div className="d-flex d-md-none mt-2">
+                  <button
+                    className="btn btn-warning btn-sm w-100 w-md-auto"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/vehiculos/editar/${vehiculo.id}`);
+                    }}
+                  >
+                    Editar
+                  </button>
+                </div>
               </div>
             )}
           </li>

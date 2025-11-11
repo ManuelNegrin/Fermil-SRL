@@ -1,11 +1,16 @@
 import { useState } from "react";
 
-function NuevoViajeForm() {
+function NuevoTicketForm() {
   const [formData, setFormData] = useState({
-    destino: "",
-    chofer: "",
+    vehiculo: "",
+    viaje: "",
+    litrosCombustible: "",
     fechaEntrada: "",
-    estado: "Activo",
+    importeTotal: "",
+    proveedor: "",
+    kilometraje: "",
+    observaciones: "",
+    estado: "Disponible",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,39 +24,39 @@ function NuevoViajeForm() {
 
   return (
     <div className="container mt-4">
-      <h2>Nuevo Viaje</h2>
+      <h2>Nuevo Ticket</h2>
       <form onSubmit={handleSubmit} className="mt-3">
         <div className="mb-3">
-          <label className="form-label">Destino</label>
+          <label className="form-label">Vehículo</label>
           <input
             type="text"
             className="form-control"
-            name="destino"
-            value={formData.destino}
+            name="vehiculo"
+            value={formData.vehiculo}
             onChange={handleChange}
             required
           />
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Chofer</label>
+          <label className="form-label">Viaje</label>
           <input
             type="text"
             className="form-control"
-            name="chofer"
-            value={formData.chofer}
+            name="viaje"
+            value={formData.viaje}
             onChange={handleChange}
             required
           />
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Fecha de Carga</label>
+          <label className="form-label">Litros de Combustible</label>
           <input
-            type="date"
+            type="number"
             className="form-control"
-            name="fechaCarga"
-            value={formData.fechaCarga}
+            name="litrosCombustible"
+            value={formData.litrosCombustible}
             onChange={handleChange}
             required
           />
@@ -70,23 +75,46 @@ function NuevoViajeForm() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Camión</label>
+          <label className="form-label">Importe Total</label>
           <input
-            type="text"
+            type="number"
             className="form-control"
-            name="camion"
-            value={formData.camion}
+            name="importeTotal"
+            value={formData.importeTotal}
             onChange={handleChange}
           />
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Notas</label>
+          <label className="form-label">Proveedor</label>
+          <input
+            type="text"
+            className="form-control"
+            name="proveedor"
+            value={formData.proveedor}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Kilometraje</label>
+          <input
+            type="number"
+            className="form-control"
+            name="kilometraje"
+            value={formData.kilometraje}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Observaciones</label>
           <textarea
             className="form-control"
-            name="notas"
+            name="observaciones"
             rows="3"
-            value={formData.notas}
+            value={formData.observaciones}
             onChange={handleChange}
           ></textarea>
         </div>
@@ -99,4 +127,4 @@ function NuevoViajeForm() {
   );
 }
 
-export default NuevoViajeForm;
+export default NuevoTicketForm;
