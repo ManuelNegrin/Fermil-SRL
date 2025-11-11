@@ -20,11 +20,13 @@ import NuevoChofer from "./components/forms/NuevoChoferForm";
 import NuevoVehiculo from "./components/forms/NuevoVehiculoForm";
 import NuevoTicket from "./components/forms/NuevoTicketForm";
 import NuevaOrden from "./components/forms/NuevoOrdenForm";
+import Login from "./components/auth/Login";
+import { AuthProvider } from "./context/AuthContext";
 
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
@@ -45,9 +47,10 @@ function App() {
           <Route path="ordenesTaller/nuevaOrden" element={<NuevaOrden />} />
           <Route path="ordenesTaller/:id" element={<OrdenDetalle />} />
           <Route path="adminPanel" element={<AdminPanel />} />
+          <Route path="login" element={<Login />} />
         </Route>
       </Routes>
-    </>
+    </AuthProvider>
   );
 }
 
