@@ -10,7 +10,7 @@ function Tickets() {
       vehiculo: "ATP4008 - Remolque Araña 40",
       viaje: "Canelones - Montevideo",
       litrosCombustible: "29L",
-      fechaEntrada: "2025-09-12",
+      fecha: "2025-09-12",
       importeTotal: "4000 UYU",
       proveedor: "Ancap",
       kilometraje: "300 km",
@@ -21,7 +21,7 @@ function Tickets() {
       vehiculo: "BCD5678 - VW Constellation",
       viaje: "Montevideo - Salto",
       litrosCombustible: "120L",
-      fechaEntrada: "2025-09-30",
+      fecha: "2025-09-30",
       importeTotal: "18000 UYU",
       proveedor: "Petrobras",
       kilometraje: "1500 km",
@@ -32,7 +32,7 @@ function Tickets() {
       vehiculo: "ACD1234 - Camión Internacional 430",
       viaje: "Montevideo - Colonia",
       litrosCombustible: "60L",
-      fechaEntrada: "2025-10-02",
+      fecha: "2025-10-02",
       importeTotal: "8000 UYU",
       proveedor: "Ancap",
       kilometraje: "800 km",
@@ -117,7 +117,7 @@ function Tickets() {
               <th>#</th>
               <th>Vehículo</th>
               <th>Viaje</th>
-              <th>Fecha Entrada</th>
+              <th>Fecha</th>
               <th>Litros</th>
               <th>Importe</th>
               <th>Proveedor</th>
@@ -134,7 +134,7 @@ function Tickets() {
                 <td>{ticket.id}</td>
                 <td>{ticket.vehiculo}</td>
                 <td>{ticket.viaje}</td>
-                <td>{ticket.fechaEntrada}</td>
+                <td>{ticket.fecha}</td>
                 <td>{ticket.litrosCombustible}</td>
                 <td>{ticket.importeTotal}</td>
                 <td>{ticket.proveedor}</td>
@@ -157,7 +157,7 @@ function Tickets() {
               <h5 className="card-title">{ticket.vehiculo}</h5>
               <p className="card-text">
                 <strong>Viaje:</strong> {ticket.viaje} <br />
-                <strong>Fecha Entrada:</strong> {ticket.fechaEntrada} <br />
+                <strong>Fecha:</strong> {ticket.fecha} <br />
                 <strong>Litros Combustible:</strong> {ticket.litrosCombustible} <br />
                 <strong>Importe Total:</strong> {ticket.importeTotal} <br />
                 <strong>Proveedor:</strong> {ticket.proveedor} <br />

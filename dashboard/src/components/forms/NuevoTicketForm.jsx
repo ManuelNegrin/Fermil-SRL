@@ -5,7 +5,7 @@ function NuevoTicketForm() {
     vehiculo: "",
     viaje: "",
     litrosCombustible: "",
-    fechaEntrada: "",
+    fecha: "",
     importeTotal: "",
     proveedor: "",
     kilometraje: "",
@@ -63,12 +63,12 @@ function NuevoTicketForm() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Fecha de Entrada</label>
+          <label className="form-label">Fecha</label>
           <input
             type="date"
             className="form-control"
-            name="fechaEntrada"
-            value={formData.fechaEntrada}
+            name="fecha"
+            value={formData.fecha}
             onChange={handleChange}
             required
           />
