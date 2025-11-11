@@ -1,14 +1,19 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 function SideBar({ expanded = true }) {
   // const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  // const handleLogout = () => {
-  //   setTimeout(() => {
-  //     toast.info("You've been logged out");
-  //     dispatch(logout());
-  //   }, 1000);
-  // };
+  const handleAuthClick = () => {
+    if (user) {
+      logout();
+      navigate("/");
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <div
@@ -145,7 +150,9 @@ function SideBar({ expanded = true }) {
       </ul>
       <hr />
 
-      <button className="btn btn-outline-light mt-3">Log out</button>
+      <button className="btn btn-outline-light mt-3" onClick={handleAuthClick}>
+        {user ? "Log out" : "Log in"}
+      </button>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import Vehiculos from "./components/features/vehiculos/Vehiculos";
 import AdminPanel from "./components/admin/AdminPanel";
 import OrdenesTaller from "./components/features/ordenes/OrdenesTaller";
 import Consumos from "./components/features/consumos/Consumos";
-import Tickets from "./components/features/consumos/tickets.jsx";
+import Tickets from "./components/features/consumos/Tickets.jsx";
 import Choferes from "./components/features/choferes/Choferes";
 import Viajes from "./components/features/viajes/Viajes";
 import OrdenDetalle from "./components/features/ordenes/OrdenDetalle";
@@ -20,11 +20,13 @@ import NuevoChofer from "./components/forms/NuevoChoferForm";
 import NuevoVehiculo from "./components/forms/NuevoVehiculoForm";
 import NuevoTicket from "./components/forms/NuevoTicketForm";
 import NuevaOrden from "./components/forms/NuevoOrdenForm";
+import Login from "./components/auth/Login";
+import { AuthProvider } from "./context/AuthContext";
 
 
 function App() {
   return (
-    <>
+    <AuthProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
@@ -45,9 +47,10 @@ function App() {
           <Route path="ordenesTaller/nuevaOrden" element={<NuevaOrden />} />
           <Route path="ordenesTaller/:id" element={<OrdenDetalle />} />
           <Route path="adminPanel" element={<AdminPanel />} />
+          <Route path="login" element={<Login />} />
         </Route>
       </Routes>
-    </>
+    </AuthProvider>
   );
 }
 
