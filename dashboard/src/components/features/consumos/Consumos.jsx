@@ -1,4 +1,6 @@
 import { Card } from "react-bootstrap";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const data = [
   { matricula: "ABC-123", ultimo: 3.1, mensual: 3.5, historico: 3.8 },
@@ -7,10 +9,61 @@ const data = [
 ];
 
 function Consumos() {
+
+  const [filtro] = useState("Consumo");
+  const navigate = useNavigate();
+
   return (
     <div className="container py-4">
-      <h2 className="mb-4 text-center">Consumos de Combustible</h2>
-      <div className="row g-4">
+      <h2 className="mb-4 text-left">Consumos de Combustible</h2>
+    <div className="row g-4">
+
+        <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-0 gap-2">
+        {/* botones de filtro desktop */}
+        <div className="d-none d-md-flex gap-2">
+          <button
+            className={`btn me-2 ${
+              filtro === "Consumo" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => navigate("/consumos")}
+          >
+            Consumo
+          </button>
+          <button
+            className={`btn me-2 ${
+              filtro === "Tickets"
+                ? "btn-primary"
+                : "btn-outline-primary"
+            }`}
+            onClick={() => navigate("/consumos/tickets")}
+          >
+            Tickets
+          </button>
+        </div>
+        {/* botones de filtro mobile */}
+        <div className="d-flex d-md-none flex-wrap gap-1 justify-content-between w-100">
+          <button
+            className={`btn btn-sm ${
+              filtro === "Consumo" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => navigate("/consumos")}
+          >
+            Consumo
+          </button>
+          <button
+            className={`btn btn-sm ${
+              filtro === "Tickets"
+                ? "btn-secondary"
+                : "btn-outline-secondary"
+            }`}
+            onClick={() => navigate("/consumos/tickets")}
+          >
+            Tickets
+          </button>
+        </div>
+      
+      
+      </div>
         {data.map((vehiculo, index) => (
           <div key={index} className="col-12 col-md-6 col-lg-4">
             <Card className="shadow-sm h-100">

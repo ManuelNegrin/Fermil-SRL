@@ -162,6 +162,28 @@ function Viajes() {
                 <p>
                   <strong>Notas:</strong> {viaje.notas}
                 </p>
+                <div className="d-none d-md-flex justify-content-end mt-2">
+                  <button
+                    className="btn btn-warning ms-auto"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/viajes/editar/${viaje.id}`);
+                    }}
+                  >
+                    Editar
+                  </button>
+                </div>
+                <div className="d-flex d-md-none mt-2">
+                  <button
+                    className="btn btn-warning btn-sm w-100 w-md-auto"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/viajes/editar/${viaje.id}`);
+                    }}
+                  >
+                    Editar
+                  </button>
+                </div>
               </div>
             )}
           </li>
