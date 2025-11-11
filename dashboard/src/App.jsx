@@ -7,7 +7,7 @@ import Vehiculos from "./components/features/vehiculos/Vehiculos";
 import AdminPanel from "./components/admin/AdminPanel";
 import OrdenesTaller from "./components/features/ordenes/OrdenesTaller";
 import Consumos from "./components/features/consumos/Consumos";
-import Tickets from "./components/features/consumos/tickets.jsx";
+import Tickets from "./components/features/consumos/Tickets.jsx";
 import Choferes from "./components/features/choferes/Choferes";
 import Viajes from "./components/features/viajes/Viajes";
 import OrdenDetalle from "./components/features/ordenes/OrdenDetalle";
