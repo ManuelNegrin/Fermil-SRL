@@ -1,40 +1,41 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { login } from "../../services/auth";
 
-function Login() {
+export default function Login() {
   const navigate = useNavigate();
-  const { login, user } = useAuth();
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     if (user) navigate("/");
   }, [user, navigate]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((s) => ({ ...s, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!form.username) {
+    if (!userName) {
       setError("El usuario es requerido");
       return;
     }
-    if (!form.password) {
+    if (!password) {
       setError("La contraseña es requerida");
       return;
     }
 
-    const res = login(form);
-    if (res.ok) {
-      navigate("/");
-    } else {
-      setError(res.message || "Error de login");
+    try {
+      console.log("Attempting login with:", { userName, password });
+      const data = await login(userName, password);
+      console.log("Login successful:", data);
+      localStorage.setItem("token", data.token);
+      setUser(data.user);
+    } catch (err) {
+      console.error("Login failed:", err);
+      setError(err.message || "Error al iniciar sesión");
     }
   };
 
@@ -49,15 +50,37 @@ function Login() {
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label className="form-label">Usuario</label>
-                  <input name="username" className="form-control" value={form.username} onChange={handleChange} required />
+                  <input
+                    name="username"
+                    type="text"
+                    className="form-control"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    required
+                  />
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Contraseña</label>
-                  <input name="password" type="password" className="form-control" value={form.password} onChange={handleChange} required />
+                  <input
+                    name="password"
+                    type="password"
+                    className="form-control"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
                 </div>
                 <div className="d-flex justify-content-between">
-                  <button className="btn btn-primary" type="submit">Entrar</button>
-                  <button type="button" className="btn btn-secondary" onClick={() => navigate(-1)}>Cancelar</button>
+                  <button className="btn btn-primary" type="submit">
+                    Entrar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => navigate(-1)}
+                  >
+                    Cancelar
+                  </button>
                 </div>
               </form>
             </div>
@@ -67,5 +90,3 @@ function Login() {
     </div>
   );
 }
-
-export default Login;
