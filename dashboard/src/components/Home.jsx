@@ -84,7 +84,7 @@ function Home() {
           <Card className="h-100 shadow-sm">
             <Card.Body>
               <Card.Title>🚛 Viajes Activos</Card.Title>
-              <Card.Text>
+              <div className="card-text">
                 <div className="text-bold">
                   Cantidad de viajes en curso:{" "}
                   <strong>
@@ -104,7 +104,7 @@ function Home() {
                       </li>
                     ))}
                 </ul>
-              </Card.Text>
+              </div>
             </Card.Body>
           </Card>
         </div>
@@ -113,7 +113,7 @@ function Home() {
           <Card className="h-100 shadow-sm">
             <Card.Body>
               <Card.Title>🛻 Remolques Libres</Card.Title>
-              <Card.Text>
+              <div className="card-text">
                 <span>
                   Total disponibles: <strong>8</strong>
                 </span>
@@ -128,7 +128,7 @@ function Home() {
                     </li>
                   ))}
                 </ul>
-              </Card.Text>
+              </div>
             </Card.Body>
           </Card>
         </div>
@@ -137,7 +137,7 @@ function Home() {
           <Card className="h-100 shadow-sm">
             <Card.Body>
               <Card.Title>⛽ Consumo de Combustible</Card.Title>
-              <Card.Text>
+              <div className="card-text">
                 <br />
                 <ul className="list-group list-group-flush">
                   {consumoCamiones.map((camion) => (
@@ -146,7 +146,7 @@ function Home() {
                     </li>
                   ))}
                 </ul>
-              </Card.Text>
+              </div>
             </Card.Body>
           </Card>
         </div>
@@ -155,17 +155,19 @@ function Home() {
           <Card className="h-100 shadow-sm">
             <Card.Body>
               <Card.Title>🔧 Unidades en Taller</Card.Title>
-              <br />
-              <ul className="list-group list-group-flush">
-                {camionesTaller.map((camionesTaller) => (
-                  <li
-                    key={camionesTaller.id}
-                    className="list-group-item p-0 pt-1"
-                  >
-                    {camionesTaller.matricula} — {camionesTaller.motivo}
-                  </li>
-                ))}
-              </ul>
+              <div className="card-text">
+                <br />
+                <ul className="list-group list-group-flush">
+                  {camionesTaller.map((camionesTaller) => (
+                    <li
+                      key={camionesTaller.id}
+                      className="list-group-item p-0 pt-1"
+                    >
+                      {camionesTaller.matricula} — {camionesTaller.motivo}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </Card.Body>
           </Card>
         </div>

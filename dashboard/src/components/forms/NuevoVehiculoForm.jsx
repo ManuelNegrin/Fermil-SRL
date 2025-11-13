@@ -1,18 +1,31 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addVehicle } from "../../redux/slices/vehiclesSlice";
 
 function NuevoVehiculoForm() {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     matricula: "",
-    chofer: "",
+    tipo: "",
+    marca: "",
     modelo: "",
     estado: "Disponible",
   });
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    await dispatch(addVehicle(formData));
+    setFormData({
+      matricula: "",
+      tipo: "",
+      marca: "",
+      modelo: "",
+      estado: "Disponible",
+    });
     console.log("Formulario enviado:", formData);
     // llamada a la api para guardar el nuevo viaje
   };
@@ -34,24 +47,35 @@ function NuevoVehiculoForm() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Chofer</label>
+          <label className="form-label">Tipo</label>
           <input
             type="text"
             className="form-control"
-            name="chofer"
-            value={formData.chofer}
+            name="tipo"
+            value={formData.tipo}
             onChange={handleChange}
             required
           />
         </div>
 
         <div className="mb-3">
+          <label className="form-label">Marca</label>
+          <input
+            type="text"
+            className="form-control"
+            name="marca"
+            value={formData.marca}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
           <label className="form-label">Modelo</label>
           <input
             type="text"
             className="form-control"
             name="modelo"
-            value={formData.modelo}
+            value={formData.modelo || ""}
             onChange={handleChange}
             required
           />

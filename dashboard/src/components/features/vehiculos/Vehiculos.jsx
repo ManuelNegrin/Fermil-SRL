@@ -1,58 +1,71 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchVehiculos } from "../../../redux/slices/vehiclesSlice";
 
 function Vehiculos() {
   const [filtro, setFiltro] = useState("Todos");
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const vehiculos = [
-    {
-      id: 1,
-      tipo: "Camion",
-      matricula: "ACD1234",
-      chofer: "Juan Perez",
-      modelo: "Internacional 430",
-      estado: "Disponible",
-    },
-    {
-      id: 2,
-      tipo: "Camion",
-      matricula: "BCD5678",
-      chofer: "Raul Gomez",
-      modelo: "VW Constellation 19.320",
-      estado: "En Reparacion",
-    },
-    {
-      id: 3,
-      tipo: "Remolque",
-      matricula: "ATP4008",
-      modelo: "Araña 40",
-      estado: "Disponible",
-    },
-    {
-      id: 4,
-      tipo: "Remolque",
-      matricula: "ATP4009",
-      modelo: "Araña 40",
-      estado: "En Uso",
-    },
-    {
-      id: 5,
-      tipo: "Camion",
-      matricula: "CDE6789",
-      chofer: "Pedro Gonzalez",
-      modelo: "Scania R450",
-      estado: "Disponible",
-    },
-    {
-      id: 6,
-      tipo: "Remolque",
-      matricula: "ATP4010",
-      modelo: "Camara",
-      estado: "Disponible",
-    },
-  ];
+  const {
+    list: vehiculos,
+    loading,
+    error,
+  } = useSelector((state) => state.vehicles);
+
+  // const vehiculos = [
+  //   {
+  //     id: 1,
+  //     tipo: "Camion",
+  //     matricula: "ACD1234",
+  //     chofer: "Juan Perez",
+  //     modelo: "Internacional 430",
+  //     estado: "Disponible",
+  //   },
+  //   {
+  //     id: 2,
+  //     tipo: "Camion",
+  //     matricula: "BCD5678",
+  //     chofer: "Raul Gomez",
+  //     modelo: "VW Constellation 19.320",
+  //     estado: "En Reparacion",
+  //   },
+  //   {
+  //     id: 3,
+  //     tipo: "Remolque",
+  //     matricula: "ATP4008",
+  //     modelo: "Araña 40",
+  //     estado: "Disponible",
+  //   },
+  //   {
+  //     id: 4,
+  //     tipo: "Remolque",
+  //     matricula: "ATP4009",
+  //     modelo: "Araña 40",
+  //     estado: "En Uso",
+  //   },
+  //   {
+  //     id: 5,
+  //     tipo: "Camion",
+  //     matricula: "CDE6789",
+  //     chofer: "Pedro Gonzalez",
+  //     modelo: "Scania R450",
+  //     estado: "Disponible",
+  //   },
+  //   {
+  //     id: 6,
+  //     tipo: "Remolque",
+  //     matricula: "ATP4010",
+  //     modelo: "Camara",
+  //     estado: "Disponible",
+  //   },
+  // ];
+
+  useEffect(() => {
+    dispatch(fetchVehiculos());
+  }, [dispatch]);
 
   const toggleSeleccion = (id) => {
     setVehiculoSeleccionado(vehiculoSeleccionado === id ? null : id);
@@ -63,6 +76,13 @@ function Vehiculos() {
     if (filtro === "Remolques") return vehiculo.tipo === "Remolque";
     return true;
   });
+
+  if (loading) {
+    return <div>Cargando vehiculos...</div>;
+  }
+  if (error) {
+    return <div>Error al cargar vehiculos: {error}</div>;
+  }
 
   return (
     <div className="p-0 m-0">
