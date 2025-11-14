@@ -22,11 +22,13 @@ import NuevoTicket from "./components/forms/NuevoTicketForm";
 import NuevaOrden from "./components/forms/NuevoOrdenForm";
 import Login from "./components/auth/Login";
 import { AuthProvider } from "./context/AuthContext";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <AuthProvider>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />

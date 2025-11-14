@@ -1,59 +1,95 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
+import {
+  editVehicle,
+  fetchVehiculos,
+  removeVehicle,
+} from "../../../redux/slices/vehiclesSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function VehiculoEditar() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const vehiculos = [
-    { 
-        id: 1, 
-        tipo: "Camion", 
-        matricula: "ACD1234", 
-        chofer: "Juan Perez", 
-        modelo: "Internacional 430", 
-        estado: "Disponible" 
-    },
-    { 
-        id: 2, 
-        tipo: "Camion", 
-        matricula: "BCD5678", 
-        chofer: "Raul Gomez", 
-        modelo: "VW Constellation 19.320", 
-        estado: "En Reparacion" 
-    },
-  ];
+  const vehiculos = useSelector((state) => state.vehicles.list);
+  const loading = useSelector((state) => state.vehicles.loading);
 
-  const v = vehiculos.find((x) => x.id === parseInt(id));
+  const [form, setForm] = useState({
+    matricula: "",
+    tipo: "",
+    marca: "",
+    modelo: "",
+    estado: "Disponible",
+  });
+  const [originalForm, setOriginalForm] = useState(null);
 
-  const initialForm = {
-    tipo: v?.tipo || "",
-    matricula: v?.matricula || "",
-    chofer: v?.chofer || "",
-    modelo: v?.modelo || "",
-    estado: v?.estado || "Disponible",
+  useEffect(() => {
+    if (!loading && vehiculos.length === 0) {
+      dispatch(fetchVehiculos());
+    }
+  }, [vehiculos, loading, dispatch]);
+
+  console.log(
+    "### STATE.vehicles crudo:",
+    useSelector((state) => state.vehicles)
+  );
+  console.log("### vehiculos (array usado):", vehiculos);
+  console.log("### id param:", id, "tipo:", typeof id);
+
+  useEffect(() => {
+    if (!vehiculos.length) return;
+    const v = vehiculos.find((x) => x.id === parseInt(id));
+    console.log("### Resultado de find():", v);
+    console.log(
+      "### Items con IDs:",
+      vehiculos.map((x) => ({ id: x.id, tipo: typeof x.id }))
+    );
+    if (v) {
+      const vehicileData = {
+        matricula: v.matricula || "",
+        tipo: v.tipo || "",
+        marca: v.marca || "",
+        modelo: v.modelo || "",
+        estado: v.estado || "Disponible",
+      };
+      setForm(vehicileData);
+      setOriginalForm(vehicileData);
+    }
+  }, [vehiculos, id]);
+
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSave = async () => {
+    await dispatch(editVehicle({ id, data: form }));
+    navigate("/vehiculos");
+  };
+  const handleDelete = async () => {
+    await dispatch(removeVehicle(id));
+    navigate("/vehiculos");
   };
 
-  const [form, setForm] = useState(initialForm);
+  const handleDiscard = () => {
+    console.log("Descartando cambios...");
+    const v = vehiculos.find((x) => x.id === parseInt(id));
+    console.log("Vehículo original:", v);
+    if (!v) return;
+    if (JSON.stringify(form) === JSON.stringify(v)) return;
+    setForm(originalForm);
+    console.log("Cambios descartados");
+    navigate("/vehiculos");
+  };
 
-  if (!v) {
+  if (loading) {
     return (
       <div className="container mt-4">
-        <h3 className="text-danger">Vehículo no encontrado</h3>
-        <button className="btn btn-secondary mt-3" onClick={() => navigate("/vehiculos")}>Volver</button>
+        <h4>Cargando...</h4>
       </div>
     );
   }
-
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const handleSave = () => { console.log("Guardar vehiculo", id, form); navigate("/vehiculos"); };
-  const handleDelete = () => { if (!confirm("¿Eliminar vehículo?")) return; console.log("Eliminar vehiculo", id); navigate("/vehiculos"); };
-
-  const handleDiscard = () => {
-    if (JSON.stringify(form) === JSON.stringify(initialForm)) return;
-    if (!confirm("Descartar cambios?")) return;
-    setForm(initialForm);
-  };
 
   return (
     <div className="container mt-4">
@@ -63,26 +99,51 @@ function VehiculoEditar() {
           <div className="row">
             <div className="col-md-4">
               <label className="form-label">Tipo</label>
-              <input className="form-control" name="tipo" value={form.tipo} onChange={handleChange} />
+              <input
+                className="form-control"
+                name="tipo"
+                value={form.tipo}
+                onChange={handleChange}
+              />
             </div>
             <div className="col-md-4">
               <label className="form-label">Matrícula</label>
-              <input className="form-control" name="matricula" value={form.matricula} onChange={handleChange} />
+              <input
+                className="form-control"
+                name="matricula"
+                value={form.matricula}
+                onChange={handleChange}
+              />
             </div>
             <div className="col-md-4">
-              <label className="form-label">Modelo</label>
-              <input className="form-control" name="modelo" value={form.modelo} onChange={handleChange} />
+              <label className="form-label">Marca</label>
+              <input
+                className="form-control"
+                name="marca"
+                value={form.marca}
+                onChange={handleChange}
+              />
             </div>
           </div>
 
           <div className="row mt-3">
             <div className="col-md-6">
-              <label className="form-label">Chofer asignado</label>
-              <input className="form-control" name="chofer" value={form.chofer} onChange={handleChange} />
+              <label className="form-label">Modelo</label>
+              <input
+                className="form-control"
+                name="modelo"
+                value={form.modelo}
+                onChange={handleChange}
+              />
             </div>
             <div className="col-md-6">
               <label className="form-label">Estado</label>
-              <select className="form-select" name="estado" value={form.estado} onChange={handleChange}>
+              <select
+                className="form-select"
+                name="estado"
+                value={form.estado}
+                onChange={handleChange}
+              >
                 <option>Disponible</option>
                 <option>En Reparacion</option>
                 <option>En Uso</option>
@@ -92,11 +153,62 @@ function VehiculoEditar() {
 
           <div className="d-flex justify-content-between mt-4">
             <div className="d-flex gap-2">
-              <button className="btn btn-primary" onClick={handleSave}>Guardar cambios</button>
-              <button className="btn btn-secondary" onClick={handleDiscard}>Descartar cambios</button>
+              <button className="btn btn-primary" onClick={handleSave}>
+                Guardar cambios
+              </button>
+              <button className="btn btn-secondary" onClick={handleDiscard}>
+                Descartar cambios
+              </button>
             </div>
             <div>
-              <button className="btn btn-danger" onClick={handleDelete}>Eliminar</button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => {
+                  console.log("Solicitando confirmación de eliminación...");
+                  toast.info(
+                    ({ closeToast }) => (
+                      <div>
+                        <p>¿Seguro que quieres eliminar este vehículo?</p>
+                        <div className="d-flex justify-content-end gap-2 mt-2">
+                          <button
+                            className="btn btn-outline-danger"
+                            onClick={async () => {
+                              await handleDelete();
+                              closeToast();
+                              toast.success(
+                                "Vehículo eliminado correctamente",
+                                {
+                                  position: "top-center",
+                                }
+                              );
+                            }}
+                          >
+                            Confirmar
+                          </button>
+
+                          <button
+                            className="btn btn-secondary"
+                            onClick={closeToast}
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    ),
+                    {
+                      position: "top-center",
+                      autoClose: false,
+                      closeOnClick: false,
+                      closeButton: false,
+                      draggable: false,
+                      pauseOnHover: true,
+                    }
+                  );
+                }}
+              >
+                Eliminar
+              </button>
             </div>
           </div>
         </div>
