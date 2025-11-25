@@ -30,7 +30,6 @@ function NuevoVehiculoForm() {
       estado: "Disponible",
     });
     console.log("Formulario enviado:", formData);
-    // llamada a la api para guardar el nuevo viaje
   };
 
   return (

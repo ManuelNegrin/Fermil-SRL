@@ -64,6 +64,16 @@ function Vehiculos() {
   // ];
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("No token found, redirecting to login");
+      navigate("/login");
+    } else {
+      console.log("Token found:", token);
+    }
+  }, []);
+
+  useEffect(() => {
     dispatch(fetchVehiculos());
   }, [dispatch]);
 
