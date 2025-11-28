@@ -28,6 +28,23 @@ function NuevoViajeForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Enviando formulario de nuevo viaje:");
+    const viajeData = {
+      ...formData,
+      origen: formData.origen,
+      destino: formData.destino,
+      chofer: formData.chofer,
+      fechaEntrada: formData.fechaEntrada.split("T")[0],
+      fechaSalida: formData.fechaSalida
+        ? formData.fechaSalida.split("T")[0]
+        : null,
+      contenedor: formData.contenedor,
+      virada: formData.virada,
+      camion: formData.camion,
+      remolque: formData.remolque,
+      notas: formData.notas,
+      estado: formData.estado,
+    };
+    console.log(viajeData);
     await dispatch(addViaje(formData));
     setFormData({
       origen: "",

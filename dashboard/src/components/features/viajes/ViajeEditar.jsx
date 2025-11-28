@@ -35,7 +35,7 @@ function ViajeEditar() {
         chofer: v?.chofer || "",
         camion: v?.camion || "",
         remolque: v?.remolque || "",
-        fechaSalida: v?.fechaSalida.split("T")[0] || "",
+        fechaSalida: v?.fechaSalida.t("T")[0] || "",
         fechaLlegada: v?.fechaLlegada || "",
         estado: v?.estado || "Activo",
       });
