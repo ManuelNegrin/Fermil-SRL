@@ -15,11 +15,14 @@ function ViajeEditar() {
     origen: "",
     destino: "",
     chofer: "",
+    fechaSalida: "",
+    fechaEntrada: "",
+    contenedor: "",
+    virada: "",
     camion: "",
     remolque: "",
-    fechaSalida: "",
-    fechaLlegada: "",
-    estado: "Activo",
+    notas: "",
+    estado: "Pendiente",
   });
 
   const [loading, setLoading] = useState(!viajes);
@@ -36,7 +39,10 @@ function ViajeEditar() {
         camion: v?.camion || "",
         remolque: v?.remolque || "",
         fechaSalida: v?.fechaSalida.t("T")[0] || "",
-        fechaLlegada: v?.fechaLlegada || "",
+        fechaEntrada: v?.fechaEntrada || "",
+        virada: v?.virada || "",
+        contenedor: v?.contenedor || "",
+        notas: v?.notas || "",
         estado: v?.estado || "Activo",
       });
     }
@@ -78,7 +84,7 @@ function ViajeEditar() {
       camion: v.camion || "",
       remolque: v.remolque || "",
       fechaSalida: v.fechaSalida || "",
-      fechaLlegada: v.fechaLlegada || "",
+      fechaEntrada: v.fechaEntrada || "",
       estado: v.estado || "Activo",
     });
     navigate("/viajes");
@@ -157,8 +163,8 @@ function ViajeEditar() {
               <input
                 type="date"
                 className="form-control"
-                name="fechaLlegada"
-                value={form.fechaLlegada}
+                name="fechaEntrada"
+                value={form.fechaEntrada}
                 onChange={handleChange}
               />
             </div>
