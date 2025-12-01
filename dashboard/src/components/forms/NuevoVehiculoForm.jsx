@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 import { addVehicle } from "../../redux/slices/vehiclesSlice";
+import { toast } from "react-toastify";
 
 function NuevoVehiculoForm() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     matricula: "",
     tipo: "",
@@ -27,7 +30,6 @@ function NuevoVehiculoForm() {
       estado: "Disponible",
     });
     console.log("Formulario enviado:", formData);
-    // llamada a la api para guardar el nuevo viaje
   };
 
   return (
@@ -81,7 +83,16 @@ function NuevoVehiculoForm() {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary">
+        <button
+          type="submit"
+          className="btn btn-primary"
+          onClick={() => {
+            toast.success("Vehículo guardado correctamente", {
+              position: "top-center",
+            });
+            navigate("/vehiculos");
+          }}
+        >
           Guardar Vehículo
         </button>
       </form>

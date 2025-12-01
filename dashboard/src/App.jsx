@@ -22,15 +22,26 @@ import NuevoTicket from "./components/forms/NuevoTicketForm";
 import NuevaOrden from "./components/forms/NuevoOrdenForm";
 import Login from "./components/auth/Login";
 import { AuthProvider } from "./context/AuthContext";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ProtectedRoute from "./components/auth/ProtectedRoutes.jsx";
 
 function App() {
   return (
     <AuthProvider>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="vehiculos" element={<Vehiculos />} />
+          <Route path="login" element={<Login />} />
+          <Route
+            path="vehiculos"
+            element={
+              // <ProtectedRoute>
+              <Vehiculos />
+              // </ProtectedRoute>
+            }
+          />
           <Route path="vehiculos/nuevoVehiculo" element={<NuevoVehiculo />} />
           <Route path="viajes" element={<Viajes />} />
           <Route path="viajes/nuevoViaje" element={<NuevoViaje />} />
@@ -47,7 +58,6 @@ function App() {
           <Route path="ordenesTaller/nuevaOrden" element={<NuevaOrden />} />
           <Route path="ordenesTaller/:id" element={<OrdenDetalle />} />
           <Route path="adminPanel" element={<AdminPanel />} />
-          <Route path="login" element={<Login />} />
         </Route>
       </Routes>
     </AuthProvider>

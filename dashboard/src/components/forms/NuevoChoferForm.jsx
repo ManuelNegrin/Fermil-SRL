@@ -1,27 +1,55 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
+import { addChofer } from "../../redux/slices/choferesSlice";
+import { toast } from "react-toastify";
 
 function NuevoChoferForm() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    nombre: "",
     documento: "",
     telefono: "",
     vencimientoDeLibreta: "",
     vehiculoAsignado: "",
     estado: "Disponible",
   });
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    await dispatch(addChofer(formData));
+    setFormData({
+      nombre: "",
+      documento: "",
+      telefono: "",
+      vencimientoDeLibreta: "",
+      vehiculoAsignado: "",
+      estado: "Disponible",
+    });
     console.log("Formulario enviado:", formData);
-    // llamada a la api para guardar el nuevo viaje
   };
 
   return (
     <div className="container mt-4">
       <h2>Nuevo Chofer</h2>
       <form onSubmit={handleSubmit} className="mt-3">
+        <div className="mb-3">
+          <label className="form-label">Nombre</label>
+          <input
+            type="text"
+            className="form-control"
+            name="nombre"
+            value={formData.nombre}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
         <div className="mb-3">
           <label className="form-label">Documento</label>
           <input
@@ -66,11 +94,19 @@ function NuevoChoferForm() {
             name="vehiculoAsignado"
             value={formData.vehiculoAsignado}
             onChange={handleChange}
-            required
           />
         </div>
 
-        <button type="submit" className="btn btn-primary">
+        <button
+          type="submit"
+          className="btn btn-primary"
+          onClick={() => {
+            toast.success("Chofer guardado correctamente", {
+              position: "top-center",
+            });
+            navigate("/choferes");
+          }}
+        >
           Guardar Chofer
         </button>
       </form>

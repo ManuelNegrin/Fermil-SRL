@@ -32,11 +32,20 @@ export default function Login() {
       const data = await login(userName, password);
       console.log("Login successful:", data);
       localStorage.setItem("token", data.token);
+      localStorage.setItem("token_exp", Date.now() + 8 * 60 * 60 * 1000); // 8 hours expiration
       setUser(data.user);
     } catch (err) {
       console.error("Login failed:", err);
       setError(err.message || "Error al iniciar sesión");
     }
+  };
+
+  const logout = (navigate) => {
+    console.log("Logging out user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("token_exp");
+    setUser(null);
+    navigate("/login");
   };
 
   return (
@@ -77,7 +86,8 @@ export default function Login() {
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    onClick={() => navigate(-1)}
+                    // onClick={() => navigate(-1)}
+                    onClick={() => logout(navigate)}
                   >
                     Cancelar
                   </button>

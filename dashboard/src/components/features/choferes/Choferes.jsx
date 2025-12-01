@@ -1,46 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchChoferes } from "../../../redux/slices/choferesSlice";
 
 function Choferes() {
   const [filtro, setFiltro] = useState("Todos");
   const [choferSeleccionado, setChoferSeleccionado] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const choferes = [
-    {
-      id: 1,
-      nombre: "Juan",
-      apellido: "Perez",
-      ci: "3.456.456-7",
-      telefono: "098752345",
-      fechaNacimiento: "10/05/1980",
-      fechaLibreta: "10/09/2026",
-      estado: "Disponible",
-      vehiculo: "ACD1234",
-    },
-    {
-      id: 2,
-      nombre: "Raul",
-      apellido: "Gomez",
-      ci: "5.678.678-9",
-      telefono: "098752345",
-      fechaNacimiento: "10/08/1978",
-      fechaLibreta: "18/02/2029",
-      estado: "En viaje",
-      vehiculo: "BCD5678",
-    },
-    {
-      id: 3,
-      nombre: "Federico",
-      apellido: "Gutierrez",
-      ci: "4.567.567-8",
-      telefono: "098752345",
-      fechaNacimiento: "10/08/1978",
-      fechaLibreta: "18/02/2029",
-      estado: "Disponible",
-      vehiculo: "CDE6789",
-    },
-  ];
+  const {
+    list: choferes = [],
+    loading,
+    error,
+  } = useSelector((state) => state.choferes);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("No token found, redirecting to login");
+      navigate("/login");
+    } else {
+      console.log("Token found:", token);
+    }
+  }, []);
+
+  console.log(
+    "Redux state.choferes:",
+    useSelector((state) => state.choferes)
+  );
+  console.log("Choferes list:", choferes);
+
+  useEffect(() => {
+    dispatch(fetchChoferes());
+  }, [dispatch]);
 
   const toggleSeleccion = (id) => {
     setChoferSeleccionado(choferSeleccionado === id ? null : id);
@@ -55,6 +48,14 @@ function Choferes() {
       ? chofer.estado === "Licencia"
       : true
   );
+
+  if (loading) {
+    return <div>Cargando choferes...</div>;
+  }
+
+  if (error) {
+    return <div>Error al cargar los choferes: {error}</div>;
+  }
 
   return (
     <div className="p-0 m-0">
@@ -148,7 +149,7 @@ function Choferes() {
             {choferSeleccionado === chofer.id && (
               <div className="mt-2 text-muted">
                 <p>
-                  <strong>Documento:</strong> {chofer.ci}
+                  <strong>Nombre:</strong> {chofer.nombre}
                 </p>
                 <p>
                   <strong>Telefono:</strong> {chofer.telefono}
