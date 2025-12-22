@@ -68,12 +68,7 @@ function ChoferEditar() {
   };
 
   const handleDiscard = () => {
-    if (JSON.stringify(form) === JSON.stringify(initialForm)) {
-      // no changes
-      return;
-    }
-    if (!confirm("Descartar cambios?")) return;
-    setForm(initialForm);
+    navigate("/choferes");
   };
 
   return (

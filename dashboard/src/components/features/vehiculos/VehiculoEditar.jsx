@@ -50,9 +50,7 @@ function VehiculoEditar() {
   const handleDelete = () => { if (!confirm("¿Eliminar vehículo?")) return; console.log("Eliminar vehiculo", id); navigate("/vehiculos"); };
 
   const handleDiscard = () => {
-    if (JSON.stringify(form) === JSON.stringify(initialForm)) return;
-    if (!confirm("Descartar cambios?")) return;
-    setForm(initialForm);
+    navigate("/vehiculos");
   };
 
   return (

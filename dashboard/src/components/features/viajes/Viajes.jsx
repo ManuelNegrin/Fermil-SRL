@@ -2,11 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Viajes() {
-  const [filtro, setFiltro] = useState("Activo");
+  const [filtro, setFiltro] = useState("Todo");
   const [viajeSeleccionado, setViajeSeleccionado] = useState(null);
-  const navigate = useNavigate();
-
-  const viajes = [
+  const [viajes, setViajes] = useState([
     {
       id: 1,
       destino: "Montevideo-Melo",
@@ -47,7 +45,9 @@ function Viajes() {
       fechaEntrada: "2025-10-01",
       estado: "Finalizado",
     },
-  ];
+  ]);
+
+  const navigate = useNavigate();
 
   const viajesFiltrados = viajes.filter((viaje) =>
     filtro === "Todo" ? true : viaje.estado === filtro
@@ -55,6 +55,10 @@ function Viajes() {
 
   const toggleSeleccion = (id) => {
     setViajeSeleccionado(viajeSeleccionado === id ? null : id);
+  };
+
+  const handleEstadoChange = (id, nuevoEstado) => {
+    setViajes(viajes.map((v) => (v.id === id ? { ...v, estado: nuevoEstado } : v)));
   };
 
   return (
@@ -67,11 +71,27 @@ function Viajes() {
         <div className="d-none d-md-flex gap-2">
           <button
             className={`btn me-2 ${
+              filtro === "Todo" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => setFiltro("Todo")}
+          >
+            Todos
+          </button>
+          <button
+            className={`btn me-2 ${
               filtro === "Activo" ? "btn-primary" : "btn-outline-primary"
             }`}
             onClick={() => setFiltro("Activo")}
           >
             Activos
+          </button>
+          <button
+            className={`btn me-2 ${
+              filtro === "Pendiente" ? "btn-secondary" : "btn-outline-secondary"
+            }`}
+            onClick={() => setFiltro("Pendiente")}
+          >
+            Pendientes
           </button>
           <button
             className={`btn me-2 ${
@@ -83,14 +103,6 @@ function Viajes() {
           >
             Finalizados
           </button>
-          <button
-            className={`btn me-2 ${
-              filtro === "Todo" ? "btn-secondary" : "btn-outline-secondary"
-            }`}
-            onClick={() => setFiltro("Todo")}
-          >
-            Todos
-          </button>
         </div>
         {/* botones de filtro mobile */}
         <div className="d-flex d-md-none flex-wrap gap-1 justify-content-between w-100">
@@ -101,6 +113,14 @@ function Viajes() {
             onClick={() => setFiltro("Activo")}
           >
             Activos
+          </button>
+          <button
+            className={`btn btn-sm ${
+              filtro === "Pendiente" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => setFiltro("Pendiente")}
+          >
+            Pendientes
           </button>
           <button
             className={`btn btn-sm ${
@@ -162,6 +182,20 @@ function Viajes() {
                 <p>
                   <strong>Notas:</strong> {viaje.notas}
                 </p>
+                <div className="mb-3">
+                  <label className="form-label"><strong>Estado:</strong></label>
+                  <select 
+                    className="form-select" 
+                    value={viaje.estado} 
+                    onChange={(e) => handleEstadoChange(viaje.id, e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <option>Activo</option>
+                    <option>Pendiente</option>
+                    <option>Finalizado</option>
+                    <option>Cancelado</option>
+                  </select>
+                </div>
                 <div className="d-none d-md-flex justify-content-end mt-2">
                   <button
                     className="btn btn-warning ms-auto"

@@ -62,9 +62,7 @@ function TicketEditar() {
   const handleDelete = () => { if (!confirm("¿Eliminar ticket?")) return; console.log("Eliminar ticket", id); navigate("/consumos/tickets"); };
 
   const handleDiscard = () => {
-    if (JSON.stringify(form) === JSON.stringify(initialForm)) return;
-    if (!confirm("Descartar cambios?")) return;
-    setForm(initialForm);
+    navigate("/consumos/tickets");
   };
 
   return (

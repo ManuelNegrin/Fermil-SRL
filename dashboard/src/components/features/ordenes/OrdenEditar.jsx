@@ -47,9 +47,7 @@ function OrdenEditar() {
   const handleDelete = () => { if (!confirm("¿Eliminar orden?")) return; console.log("Eliminar orden", id); navigate("/ordenesTaller"); };
 
   const handleDiscard = () => {
-    if (JSON.stringify(form) === JSON.stringify(initialForm)) return;
-    if (!confirm("Descartar cambios?")) return;
-    setForm(initialForm);
+    navigate("/ordenesTaller");
   };
 
   return (

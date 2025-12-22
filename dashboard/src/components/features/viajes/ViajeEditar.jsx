@@ -49,9 +49,7 @@ function ViajeEditar() {
   const handleDelete = () => { if (!confirm("¿Eliminar viaje?")) return; console.log("Eliminar viaje", id); navigate("/viajes"); };
 
   const handleDiscard = () => {
-    if (JSON.stringify(form) === JSON.stringify(initialForm)) return;
-    if (!confirm("Descartar cambios?")) return;
-    setForm(initialForm);
+    navigate("/viajes");
   };
 
   return (
@@ -86,6 +84,7 @@ function ViajeEditar() {
               <label className="form-label">Estado</label>
               <select className="form-select" name="estado" value={form.estado} onChange={handleChange}>
                 <option>Activo</option>
+                <option>Pendiente</option>
                 <option>Finalizado</option>
                 <option>Cancelado</option>
               </select>
