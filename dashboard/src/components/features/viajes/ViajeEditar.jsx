@@ -93,7 +93,18 @@ function ViajeEditar() {
 
           <div className="d-flex justify-content-between mt-4">
             <div className="d-flex gap-2">
-              <button className="btn btn-primary" onClick={handleSave}>Guardar cambios</button>
+              <button
+              type="submit"
+              className="btn btn-primary"
+              onClick={() => {
+                toast.success("Chofer guardado correctamente", {
+                  position: "top-center",
+                });
+                navigate("/choferes");
+              }}
+            >
+              Guardar Chofer
+            </button>
               <button className="btn btn-secondary" onClick={handleDiscard}>Descartar cambios</button>
             </div>
             <div>

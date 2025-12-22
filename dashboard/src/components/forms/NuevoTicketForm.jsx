@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
+import { addTicket } from "../../redux/slices/ticketsSlice";
+import { toast } from "react-toastify";
 
 function NuevoTicketForm() {
   const navigate = useNavigate();
@@ -12,14 +16,25 @@ function NuevoTicketForm() {
     proveedor: "",
     kilometraje: "",
     observaciones: "",
-    estado: "Disponible",
   });
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    await dispatch(addTicket(formData));
+    setFormData({
+      vehiculo: "",
+      viaje: "",
+      litrosCombustible: "",
+      fechaEntrada: "",
+      importeTotal: "",
+      proveedor: "",
+      kilometraje: "",
+      observaciones: "",
+    });
     console.log("Formulario enviado:", formData);
     // llamada a la api para guardar el nuevo ticket
     navigate("/consumos/tickets");
@@ -126,8 +141,17 @@ function NuevoTicketForm() {
         </div>
 
         <div className="d-flex gap-2 mt-3">
-          <button type="submit" className="btn btn-primary">
-            Guardar Ticket
+          <button
+          type="submit"
+          className="btn btn-primary"
+          onClick={() => {
+            toast.success("Ticket de combustible guardado correctamente", {
+              position: "top-center",
+            });
+            navigate("/consumos/tickets");
+            }}
+          >
+            Guardar Viaje
           </button>
           <button type="button" className="btn btn-secondary" onClick={handleDiscard}>
             Descartar
