@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 function Tickets() {
   const navigate = useNavigate();
   const [filtro] = useState("Tickets");
+  const [ticketSeleccionado, setTicketSeleccionado] = useState(null);
   const [tickets] = useState([
     {
       id: 1,
@@ -122,13 +123,14 @@ function Tickets() {
               <th>Importe</th>
               <th>Proveedor</th>
               <th>Kilometraje</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {tickets.map((ticket) => (
               <tr
                 key={ticket.id}
-                onClick={() => navigate(`/consumos/tickets/${ticket.id}`)}
+                onClick={() => setTicketSeleccionado(ticketSeleccionado === ticket.id ? null : ticket.id)}
                 style={{ cursor: "pointer" }}
               >
                 <td>{ticket.id}</td>
@@ -139,6 +141,19 @@ function Tickets() {
                 <td>{ticket.importeTotal}</td>
                 <td>{ticket.proveedor}</td>
                 <td>{ticket.kilometraje}</td>
+                <td>
+                  {ticketSeleccionado === ticket.id && (
+                    <button
+                      className="btn btn-warning btn-sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/consumos/tickets/editar/${ticket.id}`);
+                      }}
+                    >
+                      Editar
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -151,19 +166,33 @@ function Tickets() {
           <div
             key={ticket.id}
             className="card mb-3 shadow-sm"
-            onClick={() => navigate(`/consumos/tickets/${ticket.id}`)}
+            onClick={() => setTicketSeleccionado(ticketSeleccionado === ticket.id ? null : ticket.id)}
+            style={{ cursor: "pointer" }}
           >
             <div className="card-body">
               <h5 className="card-title">{ticket.vehiculo}</h5>
-              <p className="card-text">
-                <strong>Viaje:</strong> {ticket.viaje} <br />
-                <strong>Fecha:</strong> {ticket.fecha} <br />
-                <strong>Litros Combustible:</strong> {ticket.litrosCombustible} <br />
-                <strong>Importe Total:</strong> {ticket.importeTotal} <br />
-                <strong>Proveedor:</strong> {ticket.proveedor} <br />
-                <strong>Kilometraje:</strong> {ticket.kilometraje} <br />
-                <strong>Observaciones:</strong> {ticket.observaciones}
-              </p>
+              {ticketSeleccionado === ticket.id && (
+                <div className="mt-2 text-muted">
+                  <p className="card-text">
+                    <strong>Viaje:</strong> {ticket.viaje} <br />
+                    <strong>Fecha:</strong> {ticket.fecha} <br />
+                    <strong>Litros Combustible:</strong> {ticket.litrosCombustible} <br />
+                    <strong>Importe Total:</strong> {ticket.importeTotal} <br />
+                    <strong>Proveedor:</strong> {ticket.proveedor} <br />
+                    <strong>Kilometraje:</strong> {ticket.kilometraje} <br />
+                    <strong>Observaciones:</strong> {ticket.observaciones}
+                  </p>
+                  <button
+                    className="btn btn-warning btn-sm w-100 w-md-auto mt-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/consumos/tickets/editar/${ticket.id}`);
+                    }}
+                  >
+                    Editar
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

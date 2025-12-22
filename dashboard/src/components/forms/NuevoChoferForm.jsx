@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function NuevoChoferForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     documento: "",
     telefono: "",
@@ -15,7 +17,11 @@ function NuevoChoferForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Formulario enviado:", formData);
-    // llamada a la api para guardar el nuevo viaje
+    // llamada a la api para guardar el nuevo chofer
+    navigate("/choferes");
+  };
+  const handleDiscard = () => {
+    navigate("/choferes");
   };
 
   return (
@@ -70,9 +76,14 @@ function NuevoChoferForm() {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary">
-          Guardar Chofer
-        </button>
+        <div className="d-flex gap-2 mt-3">
+          <button type="submit" className="btn btn-primary">
+            Guardar Chofer
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={handleDiscard}>
+            Descartar
+          </button>
+        </div>
       </form>
     </div>
   );
