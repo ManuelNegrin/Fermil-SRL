@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { addTicket } from "../../redux/slices/ticketsSlice";
 import { toast } from "react-toastify";
 
