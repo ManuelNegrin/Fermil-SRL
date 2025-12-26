@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
 import { addVehicle } from "../../redux/slices/vehiclesSlice";
 import { toast } from "react-toastify";
 function NuevoVehiculoForm() {
@@ -90,22 +89,25 @@ function NuevoVehiculoForm() {
 
         <div className="d-flex gap-2 mt-3">
           <button
-          type="submit"
-          className="btn btn-primary"
-          onClick={() => {
-            toast.success("Vehículo guardado correctamente", {
-              position: "top-center",
-            });
-            navigate("/vehiculos");
-          }}
+            type="submit"
+            className="btn btn-primary"
+            onClick={() => {
+              toast.success("Vehículo guardado correctamente", {
+                position: "top-center",
+              });
+              navigate("/vehiculos");
+            }}
           >
             Guardar Vehículo
           </button>
-          <button type="button" className="btn btn-secondary" onClick={handleDiscard}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleDiscard}
+          >
             Descartar
           </button>
         </div>
-        
       </form>
     </div>
   );
