@@ -1,15 +1,17 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { addTicket } from "../../redux/slices/ticketsSlice";
 import { toast } from "react-toastify";
 
 function NuevoTicketForm() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     vehiculo: "",
     viaje: "",
     litrosCombustible: "",
-    fechaEntrada: "",
+    fecha: "",
     importeTotal: "",
     proveedor: "",
     kilometraje: "",
@@ -34,6 +36,11 @@ function NuevoTicketForm() {
       observaciones: "",
     });
     console.log("Formulario enviado:", formData);
+    // llamada a la api para guardar el nuevo ticket
+    navigate("/consumos/tickets");
+  };
+  const handleDiscard = () => {
+    navigate("/consumos/tickets");
   };
 
   return (
@@ -77,12 +84,12 @@ function NuevoTicketForm() {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Fecha de Entrada</label>
+          <label className="form-label">Fecha</label>
           <input
             type="date"
             className="form-control"
-            name="fechaEntrada"
-            value={formData.fechaEntrada}
+            name="fecha"
+            value={formData.fecha}
             onChange={handleChange}
             required
           />
@@ -133,7 +140,8 @@ function NuevoTicketForm() {
           ></textarea>
         </div>
 
-        <button
+        <div className="d-flex gap-2 mt-3">
+          <button
           type="submit"
           className="btn btn-primary"
           onClick={() => {
@@ -141,10 +149,14 @@ function NuevoTicketForm() {
               position: "top-center",
             });
             navigate("/consumos/tickets");
-          }}
-        >
-          Guardar Viaje
-        </button>
+            }}
+          >
+            Guardar Viaje
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={handleDiscard}>
+            Descartar
+          </button>
+        </div>
       </form>
     </div>
   );

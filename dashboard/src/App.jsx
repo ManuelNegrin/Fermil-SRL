@@ -15,6 +15,8 @@ import TicketDetalle from "./components/features/consumos/TicketDetalle";
 import ChoferEditar from "./components/features/choferes/ChoferEditar";
 import VehiculoEditar from "./components/features/vehiculos/VehiculoEditar";
 import ViajeEditar from "./components/features/viajes/ViajeEditar";
+import OrdenEditar from "./components/features/ordenes/OrdenEditar";
+import TicketEditar from "./components/features/consumos/TicketEditar";
 import NuevoViaje from "./components/forms/NuevoViajeForm";
 import NuevoChofer from "./components/forms/NuevoChoferForm";
 import NuevoVehiculo from "./components/forms/NuevoVehiculoForm";
@@ -56,7 +58,9 @@ function App() {
           <Route path="viajes/editar/:id" element={<ViajeEditar />} />
           <Route path="ordenesTaller" element={<OrdenesTaller />} />
           <Route path="ordenesTaller/nuevaOrden" element={<NuevaOrden />} />
+          <Route path="ordenesTaller/editar/:id" element={<OrdenEditar />} />
           <Route path="ordenesTaller/:id" element={<OrdenDetalle />} />
+          <Route path="consumos/tickets/editar/:id" element={<TicketEditar />} />
           <Route path="adminPanel" element={<AdminPanel />} />
         </Route>
       </Routes>

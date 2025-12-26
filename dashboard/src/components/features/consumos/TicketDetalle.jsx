@@ -12,7 +12,7 @@ function TicketDetalle() {
       vehiculo: "ATP4008 - Remolque Araña 40",
       viaje: "Canelones - Montevideo",
       litrosCombustible: "29L",
-      fechaEntrada: "2025-09-12",
+      fecha: "2025-09-12",
       importeTotal: "4000 UYU",
       proveedor: "Ancap",
       kilometraje: "300 km",
@@ -23,7 +23,7 @@ function TicketDetalle() {
       vehiculo: "BCD5678 - VW Constellation",
       viaje: "Montevideo - Salto",
       litrosCombustible: "120L",
-      fechaEntrada: "2025-09-30",
+      fecha: "2025-09-30",
       importeTotal: "18000 UYU",
       proveedor: "Petrobras",
       kilometraje: "1500 km",
@@ -34,7 +34,7 @@ function TicketDetalle() {
       vehiculo: "ACD1234 - Camión Internacional 430",
       viaje: "Montevideo - Colonia",
       litrosCombustible: "60L",
-      fechaEntrada: "2025-10-02",
+      fecha: "2025-10-02",
       importeTotal: "8000 UYU",
       proveedor: "Ancap",
       kilometraje: "800 km",
@@ -71,7 +71,7 @@ function TicketDetalle() {
                 <strong>Viaje:</strong> {ticket.viaje || "—"}
               </p>
               <p>
-                <strong>Fecha Entrada:</strong> {ticket.fechaEntrada || "—"}
+                <strong>Fecha:</strong> {ticket.fecha || "—"}
               </p>
               <p>
                 <strong>Litros:</strong> {ticket.litrosCombustible || "—"}

@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 function Tickets() {
   const navigate = useNavigate();
   const [filtro] = useState("Tickets");
+  const [ticketSeleccionado, setTicketSeleccionado] = useState(null);
   const [tickets] = useState([
     {
       id: 1,
       vehiculo: "ATP4008 - Remolque Araña 40",
       viaje: "Canelones - Montevideo",
       litrosCombustible: "29L",
-      fechaEntrada: "2025-09-12",
+      fecha: "2025-09-12",
       importeTotal: "4000 UYU",
       proveedor: "Ancap",
       kilometraje: "300 km",
@@ -21,7 +22,7 @@ function Tickets() {
       vehiculo: "BCD5678 - VW Constellation",
       viaje: "Montevideo - Salto",
       litrosCombustible: "120L",
-      fechaEntrada: "2025-09-30",
+      fecha: "2025-09-30",
       importeTotal: "18000 UYU",
       proveedor: "Petrobras",
       kilometraje: "1500 km",
@@ -32,7 +33,7 @@ function Tickets() {
       vehiculo: "ACD1234 - Camión Internacional 430",
       viaje: "Montevideo - Colonia",
       litrosCombustible: "60L",
-      fechaEntrada: "2025-10-02",
+      fecha: "2025-10-02",
       importeTotal: "8000 UYU",
       proveedor: "Ancap",
       kilometraje: "800 km",
@@ -117,28 +118,42 @@ function Tickets() {
               <th>#</th>
               <th>Vehículo</th>
               <th>Viaje</th>
-              <th>Fecha Entrada</th>
+              <th>Fecha</th>
               <th>Litros</th>
               <th>Importe</th>
               <th>Proveedor</th>
               <th>Kilometraje</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {tickets.map((ticket) => (
               <tr
                 key={ticket.id}
-                onClick={() => navigate(`/consumos/tickets/${ticket.id}`)}
+                onClick={() => setTicketSeleccionado(ticketSeleccionado === ticket.id ? null : ticket.id)}
                 style={{ cursor: "pointer" }}
               >
                 <td>{ticket.id}</td>
                 <td>{ticket.vehiculo}</td>
                 <td>{ticket.viaje}</td>
-                <td>{ticket.fechaEntrada}</td>
+                <td>{ticket.fecha}</td>
                 <td>{ticket.litrosCombustible}</td>
                 <td>{ticket.importeTotal}</td>
                 <td>{ticket.proveedor}</td>
                 <td>{ticket.kilometraje}</td>
+                <td>
+                  {ticketSeleccionado === ticket.id && (
+                    <button
+                      className="btn btn-warning btn-sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/consumos/tickets/editar/${ticket.id}`);
+                      }}
+                    >
+                      Editar
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -151,19 +166,33 @@ function Tickets() {
           <div
             key={ticket.id}
             className="card mb-3 shadow-sm"
-            onClick={() => navigate(`/consumos/tickets/${ticket.id}`)}
+            onClick={() => setTicketSeleccionado(ticketSeleccionado === ticket.id ? null : ticket.id)}
+            style={{ cursor: "pointer" }}
           >
             <div className="card-body">
               <h5 className="card-title">{ticket.vehiculo}</h5>
-              <p className="card-text">
-                <strong>Viaje:</strong> {ticket.viaje} <br />
-                <strong>Fecha Entrada:</strong> {ticket.fechaEntrada} <br />
-                <strong>Litros Combustible:</strong> {ticket.litrosCombustible} <br />
-                <strong>Importe Total:</strong> {ticket.importeTotal} <br />
-                <strong>Proveedor:</strong> {ticket.proveedor} <br />
-                <strong>Kilometraje:</strong> {ticket.kilometraje} <br />
-                <strong>Observaciones:</strong> {ticket.observaciones}
-              </p>
+              {ticketSeleccionado === ticket.id && (
+                <div className="mt-2 text-muted">
+                  <p className="card-text">
+                    <strong>Viaje:</strong> {ticket.viaje} <br />
+                    <strong>Fecha:</strong> {ticket.fecha} <br />
+                    <strong>Litros Combustible:</strong> {ticket.litrosCombustible} <br />
+                    <strong>Importe Total:</strong> {ticket.importeTotal} <br />
+                    <strong>Proveedor:</strong> {ticket.proveedor} <br />
+                    <strong>Kilometraje:</strong> {ticket.kilometraje} <br />
+                    <strong>Observaciones:</strong> {ticket.observaciones}
+                  </p>
+                  <button
+                    className="btn btn-warning btn-sm w-100 w-md-auto mt-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/consumos/tickets/editar/${ticket.id}`);
+                    }}
+                  >
+                    Editar
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

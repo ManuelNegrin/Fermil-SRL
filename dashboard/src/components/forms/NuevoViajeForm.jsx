@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { addViaje } from "../../redux/slices/viajesSlice";
@@ -60,6 +61,11 @@ function NuevoViajeForm() {
       estado: "Pendiente",
     });
     console.log("Formulario enviado:", formData);
+    // llamada a la api para guardar el nuevo viaje
+    navigate("/viajes");
+  };
+  const handleDiscard = () => {
+    navigate("/viajes");
   };
 
   return (
@@ -181,7 +187,8 @@ function NuevoViajeForm() {
           ></textarea>
         </div>
 
-        <button
+        <div className="d-flex gap-2 mt-3">
+          <button
           type="submit"
           className="btn btn-primary"
           onClick={() => {
@@ -190,9 +197,14 @@ function NuevoViajeForm() {
             });
             navigate("/viajes");
           }}
-        >
-          Guardar Viaje
-        </button>
+          >
+            Guardar Viaje
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={handleDiscard}>
+            Descartar
+          </button>
+        </div>
+        
       </form>
     </div>
   );

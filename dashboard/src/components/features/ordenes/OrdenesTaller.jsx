@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 function OrdenesTaller() {
   const navigate = useNavigate();
+  const [ordenSeleccionada, setOrdenSeleccionada] = useState(null);
   const [ordenes] = useState([
     {
       id: 1,
@@ -72,14 +73,15 @@ function OrdenesTaller() {
               <th>Fecha Ingreso</th>
               <th>Estado</th>
               <th>Fecha Salida</th>
-              <th>Costo</th>
+              <th>Observaciones</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {ordenes.map((orden) => (
               <tr
                 key={orden.id}
-                onClick={() => navigate(`/ordenesTaller/${orden.id}`)}
+                onClick={() => setOrdenSeleccionada(ordenSeleccionada === orden.id ? null : orden.id)}
                 style={{ cursor: "pointer" }}
               >
                 <td>{orden.id}</td>
@@ -89,7 +91,19 @@ function OrdenesTaller() {
                 <td>{orden.estado}</td>
                 <td>{orden.fechaSalida}</td>
                 <td>{orden.observaciones}</td>
-                <td></td>
+                <td>
+                  {ordenSeleccionada === orden.id && (
+                    <button
+                      className="btn btn-warning btn-sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/ordenesTaller/editar/${orden.id}`);
+                      }}
+                    >
+                      Editar
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -102,17 +116,31 @@ function OrdenesTaller() {
           <div
             key={orden.id}
             className="card mb-3 shadow-sm"
-            onClick={() => navigate(`/ordenesTaller/${orden.id}`)}
+            onClick={() => setOrdenSeleccionada(ordenSeleccionada === orden.id ? null : orden.id)}
+            style={{ cursor: "pointer" }}
           >
             <div className="card-body">
               <h5 className="card-title">{orden.vehiculo}</h5>
-              <p className="card-text">
-                <strong>Trabajo:</strong> {orden.trabajo} <br />
-                <strong>Fecha Ingreso:</strong> {orden.fechaIngreso} <br />
-                <strong>Fecha Salida:</strong> {orden.fechaSalida} <br />
-                <strong>Estado:</strong> {orden.estado} <br />
-                <strong>Observaciones:</strong> {orden.observaciones}
-              </p>
+              {ordenSeleccionada === orden.id && (
+                <div className="mt-2 text-muted">
+                  <p className="card-text">
+                    <strong>Trabajo:</strong> {orden.trabajo} <br />
+                    <strong>Fecha Ingreso:</strong> {orden.fechaIngreso} <br />
+                    <strong>Fecha Salida:</strong> {orden.fechaSalida} <br />
+                    <strong>Estado:</strong> {orden.estado} <br />
+                    <strong>Observaciones:</strong> {orden.observaciones}
+                  </p>
+                  <button
+                    className="btn btn-warning btn-sm w-100 w-md-auto mt-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/ordenesTaller/editar/${orden.id}`);
+                    }}
+                  >
+                    Editar
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

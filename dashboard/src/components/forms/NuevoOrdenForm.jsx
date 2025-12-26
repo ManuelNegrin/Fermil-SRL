@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { addOrden } from "../../redux/slices/ordenesSlice";
@@ -32,6 +33,11 @@ function NuevoOrdenForm() {
       estado: "Pendiente",
     });
     console.log("Formulario enviado:", formData);
+    // llamada a la api para guardar la nueva orden
+    navigate("/ordenesTaller");
+  };
+  const handleDiscard = () => {
+    navigate("/ordenesTaller");
   };
 
   return (
@@ -95,7 +101,8 @@ function NuevoOrdenForm() {
           ></textarea>
         </div>
 
-        <button
+        <div className="d-flex gap-2 mt-3">
+          <button
           type="submit"
           className="btn btn-primary"
           onClick={() => {
@@ -104,9 +111,14 @@ function NuevoOrdenForm() {
             });
             navigate("/viajes");
           }}
-        >
-          Guardar Orden
-        </button>
+          >
+            Guardar Orden
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={handleDiscard}>
+            Descartar
+          </button>
+        </div>
+        
       </form>
     </div>
   );
