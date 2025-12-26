@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
 import { addViaje } from "../../redux/slices/viajesSlice";
 import { toast } from "react-toastify";
 
@@ -189,22 +188,25 @@ function NuevoViajeForm() {
 
         <div className="d-flex gap-2 mt-3">
           <button
-          type="submit"
-          className="btn btn-primary"
-          onClick={() => {
-            toast.success("Viaje guardado correctamente", {
-              position: "top-center",
-            });
-            navigate("/viajes");
-          }}
+            type="submit"
+            className="btn btn-primary"
+            onClick={() => {
+              toast.success("Viaje guardado correctamente", {
+                position: "top-center",
+              });
+              navigate("/viajes");
+            }}
           >
             Guardar Viaje
           </button>
-          <button type="button" className="btn btn-secondary" onClick={handleDiscard}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleDiscard}
+          >
             Descartar
           </button>
         </div>
-        
       </form>
     </div>
   );
