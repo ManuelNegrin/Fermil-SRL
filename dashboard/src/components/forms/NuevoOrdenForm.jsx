@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
 import { addOrden } from "../../redux/slices/ordenesSlice";
 import { toast } from "react-toastify";
 
@@ -103,22 +102,25 @@ function NuevoOrdenForm() {
 
         <div className="d-flex gap-2 mt-3">
           <button
-          type="submit"
-          className="btn btn-primary"
-          onClick={() => {
-            toast.success("Orden de trabajo guardada correctamente", {
-              position: "top-center",
-            });
-            navigate("/viajes");
-          }}
+            type="submit"
+            className="btn btn-primary"
+            onClick={() => {
+              toast.success("Orden de trabajo guardada correctamente", {
+                position: "top-center",
+              });
+              navigate("/viajes");
+            }}
           >
             Guardar Orden
           </button>
-          <button type="button" className="btn btn-secondary" onClick={handleDiscard}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleDiscard}
+          >
             Descartar
           </button>
         </div>
-        
       </form>
     </div>
   );
