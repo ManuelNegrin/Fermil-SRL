@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
 import { addViaje } from "../../redux/slices/viajesSlice";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { fetchVehiculos } from "../../redux/slices/vehiclesSlice";
 
 function NuevoViajeForm() {
   const dispatch = useDispatch();
@@ -21,6 +22,20 @@ function NuevoViajeForm() {
     notas: "",
     estado: "Pendiente",
   });
+  const { list: vehiculos, loading } = useSelector((state) => state.vehiculos);
+
+  useEffect(() => {
+    if (!vehiculos.lenght) {
+      dispatch(fetchVehiculos());
+    }
+  }, [dispatch, vehiculos.length]);
+
+  const camionesDisponibles = vehiculos.filter(
+    (v) => v.tipo === "Camion" && v.estado === "Disponible"
+  );
+  const remolquesDisponibles = vehiculos.filter(
+    (v) => v.tipo === "Remolque" && v.estado === "Disponible"
+  );
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -46,7 +61,7 @@ function NuevoViajeForm() {
       estado: formData.estado,
     };
     console.log(viajeData);
-    await dispatch(addViaje(formData));
+    await dispatch(addViaje(viajeData));
     setFormData({
       origen: "",
       destino: "",
@@ -64,6 +79,7 @@ function NuevoViajeForm() {
     // llamada a la api para guardar el nuevo viaje
     navigate("/viajes");
   };
+  //array de camiones y remolques para seleccionar en el formulario
   const handleDiscard = () => {
     navigate("/viajes");
   };
@@ -156,24 +172,45 @@ function NuevoViajeForm() {
 
         <div className="mb-3">
           <label className="form-label">Camión</label>
-          <input
-            type="text"
-            className="form-control"
+          <select
+            className="form-select"
             name="camion"
             value={formData.camion}
             onChange={handleChange}
-          />
+            required
+            disabled={loading}
+          >
+            <option value="">Seleccionar camión</option>
+            {camionesDisponibles.length === 0 && (
+              <option disabled>No hay camiones disponibles</option>
+            )}
+            {camionesDisponibles.map((camion) => (
+              <option key={camion.id} value={camion.id}>
+                {camion.matricula}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="mb-3">
           <label className="form-label">Remolque</label>
-          <input
-            type="text"
-            className="form-control"
+          <select
+            className="form-select"
             name="remolque"
             value={formData.remolque}
             onChange={handleChange}
-          />
+            disabled={loading}
+          >
+            <option value="">Seleccionar remolque</option>
+            {remolquesDisponibles.length === 0 && (
+              <option disabled>No hay remolques disponibles</option>
+            )}
+            {remolquesDisponibles.map((remolque) => (
+              <option key={remolque.id} value={remolque.id}>
+                {remolque.matricula}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="mb-3">
@@ -189,22 +226,25 @@ function NuevoViajeForm() {
 
         <div className="d-flex gap-2 mt-3">
           <button
-          type="submit"
-          className="btn btn-primary"
-          onClick={() => {
-            toast.success("Viaje guardado correctamente", {
-              position: "top-center",
-            });
-            navigate("/viajes");
-          }}
+            type="submit"
+            className="btn btn-primary"
+            onClick={() => {
+              toast.success("Viaje guardado correctamente", {
+                position: "top-center",
+              });
+              navigate("/viajes");
+            }}
           >
             Guardar Viaje
           </button>
-          <button type="button" className="btn btn-secondary" onClick={handleDiscard}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleDiscard}
+          >
             Descartar
           </button>
         </div>
-        
       </form>
     </div>
   );
