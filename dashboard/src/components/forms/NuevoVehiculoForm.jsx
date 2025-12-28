@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addVehicle } from "../../redux/slices/vehiclesSlice";
 import { toast } from "react-toastify";
+
 function NuevoVehiculoForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
