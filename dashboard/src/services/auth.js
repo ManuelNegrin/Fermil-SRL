@@ -1,7 +1,7 @@
 import { apiFetch } from "./api";
 
 export const login = async (email, password) => {
-  const data = await apiFetch("/api/auth/login", {
+  const data = await apiFetch("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
@@ -14,14 +14,14 @@ export const login = async (email, password) => {
 };
 
 export const register = async (email, password, name, role = "user") => {
-  return apiFetch("/api/auth/register", {
+  return apiFetch("auth/register", {
     method: "POST",
     body: JSON.stringify({ email, password, name, role }),
   });
 };
 
 export const fetchUserProfile = async (token) => {
-  return apiFetch("/api/auth/profile", {
+  return apiFetch("/auth/profile", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
