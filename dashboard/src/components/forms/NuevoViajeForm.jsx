@@ -22,7 +22,10 @@ function NuevoViajeForm() {
     notas: "",
     estado: "Pendiente",
   });
-  const { list: vehiculos, loading } = useSelector((state) => state.vehiculos);
+
+  const { list: vehiculos = [], loading = false } = useSelector(
+    (state) => state.vehiculos || {}
+  );
 
   useEffect(() => {
     if (!vehiculos.lenght) {

@@ -14,8 +14,8 @@ function VehiculoEditar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const vehiculos = useSelector((state) => state.vehicles.list);
-  const loading = useSelector((state) => state.vehicles.loading);
+  const vehiculos = useSelector((state) => state.vehiculos.list);
+  const loading = useSelector((state) => state.vehiculos.loading);
 
   const [form, setForm] = useState({
     matricula: "",
@@ -33,8 +33,8 @@ function VehiculoEditar() {
   }, [vehiculos, loading, dispatch]);
 
   console.log(
-    "### STATE.vehicles crudo:",
-    useSelector((state) => state.vehicles)
+    "### STATE.vehiculos crudo:",
+    useSelector((state) => state.vehiculos)
   );
   console.log("### vehiculos (array usado):", vehiculos);
   console.log("### id param:", id, "tipo:", typeof id);

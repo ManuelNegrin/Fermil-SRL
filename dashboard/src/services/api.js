@@ -15,6 +15,7 @@ export const apiFetch = async (endpoint, options = {}) => {
   };
 
   console.log(`API Request to ${endpoint}`, config);
+  console.log(`Full URL: ${API_URL}${endpoint}`);
 
   const response = await fetch(`${API_URL}${endpoint}`, config);
 

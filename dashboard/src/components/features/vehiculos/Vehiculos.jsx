@@ -13,7 +13,7 @@ function Vehiculos() {
     list: vehiculos,
     loading,
     error,
-  } = useSelector((state) => state.vehicles);
+  } = useSelector((state) => state.vehiculos);
 
   // const vehiculos = [
   //   {
