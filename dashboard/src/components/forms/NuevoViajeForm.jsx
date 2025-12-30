@@ -79,10 +79,8 @@ function NuevoViajeForm() {
       estado: "Pendiente",
     });
     console.log("Formulario enviado:", formData);
-    // llamada a la api para guardar el nuevo viaje
     navigate("/viajes");
   };
-  //array de camiones y remolques para seleccionar en el formulario
   const handleDiscard = () => {
     navigate("/viajes");
   };
