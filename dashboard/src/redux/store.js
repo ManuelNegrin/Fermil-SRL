@@ -6,7 +6,7 @@ import viajesReducer from "./slices/viajesSlice";
 
 export const store = configureStore({
   reducer: {
-    vehicles: vehiclesReducer,
+    vehiculos: vehiclesReducer,
     choferes: choferesReducer,
     ordenes: ordenesReducer,
     viajes: viajesReducer,
