@@ -1,19 +1,11 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../../context/useAuth";
 
-export default function ProtectedRoute({ children }) {
-  const token = localStorage.getItem("token");
-  const exp = localStorage.getItem("token_exp");
-  console.log("ProtectedRoute token:", token);
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (exp && Date.now() > Number(exp)) {
-    console.log("Token expired");
-    localStorage.removeItem("token");
-    localStorage.removeItem("token_exp");
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
+export default function ProtectedRoute({ permission }) {
+  const { user, loading, hasPermission } = useAuth();
+  if (loading) return <div className="app-loading">Validando sesion...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.isPlatformAdmin) return <Navigate to="/platform" replace />;
+  if (permission && !hasPermission(permission)) return <Navigate to="/" replace />;
+  return <Outlet />;
 }

@@ -1,28 +1,32 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import { readSession } from "./session";
+
+const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+
+export class ApiError extends Error {
+  constructor(status, message, payload) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.payload = payload;
+  }
+}
 
 export const apiFetch = async (endpoint, options = {}) => {
-  const token = localStorage.getItem("authToken");
-
+  const session = readSession();
   const headers = {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    Accept: "application/json",
+    ...(options.body ? { "Content-Type": "application/json" } : {}),
+    ...(session?.token ? { Authorization: `Bearer ${session.token}` } : {}),
+    ...(options.organizationId ? { "X-Organization-Id": options.organizationId } : {}),
+    ...(options.headers || {}),
   };
-
-  const config = {
+  const response = await fetch(`${API_URL}${endpoint}`, {
     method: options.method || "GET",
     headers,
-    body: options.body ? options.body : null,
-  };
-
-  console.log(`API Request to ${endpoint}`, config);
-  console.log(`Full URL: ${API_URL}${endpoint}`);
-
-  const response = await fetch(`${API_URL}${endpoint}`, config);
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`API Error: ${response.status}: ${errorText}`);
-  }
-
-  return response.json();
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+  const contentType = response.headers.get("content-type") || "";
+  const payload = contentType.includes("application/json") ? await response.json() : null;
+  if (!response.ok) throw new ApiError(response.status, payload?.error || "No se pudo completar la solicitud.", payload);
+  return payload;
 };

@@ -1,43 +1,46 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { getCurrentUser, login as loginRequest } from "../services/auth";
+import { clearSession, readSession, saveSession } from "../services/session";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    try {
-      const raw = localStorage.getItem("fermil_user");
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) {
-      return null;
-    }
-  });
+  const [initialSession] = useState(readSession);
+  const [session, setSession] = useState(initialSession);
+  const [loading, setLoading] = useState(true);
+
+  const logout = useCallback(() => { clearSession(); setSession(null); }, []);
+  const login = useCallback(async (email, password) => {
+    const result = await loginRequest(email, password);
+    const profile = await getCurrentUser();
+    const nextSession = { token: result.token, user: { ...result.user, ...profile } };
+    saveSession(nextSession); setSession(nextSession);
+    return nextSession.user;
+  }, []);
 
   useEffect(() => {
-    if (user) localStorage.setItem("fermil_user", JSON.stringify(user));
-    else localStorage.removeItem("fermil_user");
-  }, [user]);
+    const restore = async () => {
+      if (!initialSession?.token) { setLoading(false); return; }
+      try {
+        const profile = await getCurrentUser();
+        const nextSession = { ...initialSession, user: { ...initialSession.user, ...profile } };
+        saveSession(nextSession); setSession(nextSession);
+      } catch {
+        logout();
+      } finally { setLoading(false); }
+    };
+    restore();
+  }, [initialSession, logout]);
 
-  const login = ({ username, password }) => {
-    // simple demo auth: admin / admin123
-    if (username === "admin" && password === "admin123") {
-      const u = { username: "admin", displayName: "Administrador" };
-      setUser(u);
-      return { ok: true, user: u };
-    }
-    return { ok: false, message: "Credenciales inválidas" };
-  };
-
-  const logout = () => setUser(null);
-
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-export function useAuth() {
-  return useContext(AuthContext);
+  const value = useMemo(() => ({
+    user: session?.user || null,
+    token: session?.token || null,
+    loading,
+    login,
+    logout,
+    hasPermission: (permission) => Boolean(session?.user?.isPlatformAdmin || session?.user?.permissions?.includes(permission)),
+  }), [session, loading, login, logout]);
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export default AuthContext;

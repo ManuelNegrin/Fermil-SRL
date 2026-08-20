@@ -1,71 +1,18 @@
-import { useState } from "react";
-import "./App.css";
 import { Route, Routes } from "react-router-dom";
-import Home from "./components/Home";
-import Layout from "./components/layout/Layout";
-import Vehiculos from "./components/features/vehiculos/Vehiculos";
-import AdminPanel from "./components/admin/AdminPanel";
-import OrdenesTaller from "./components/features/ordenes/OrdenesTaller";
-import Consumos from "./components/features/consumos/Consumos";
-import Tickets from "./components/features/consumos/Tickets.jsx";
-import Choferes from "./components/features/choferes/Choferes";
-import Viajes from "./components/features/viajes/Viajes";
-import OrdenDetalle from "./components/features/ordenes/OrdenDetalle";
-import TicketDetalle from "./components/features/consumos/TicketDetalle";
-import ChoferEditar from "./components/features/choferes/ChoferEditar";
-import VehiculoEditar from "./components/features/vehiculos/VehiculoEditar";
-import ViajeEditar from "./components/features/viajes/ViajeEditar";
-import OrdenEditar from "./components/features/ordenes/OrdenEditar";
-import TicketEditar from "./components/features/consumos/TicketEditar";
-import NuevoViaje from "./components/forms/NuevoViajeForm";
-import NuevoChofer from "./components/forms/NuevoChoferForm";
-import NuevoVehiculo from "./components/forms/NuevoVehiculoForm";
-import NuevoTicket from "./components/forms/NuevoTicketForm";
-import NuevaOrden from "./components/forms/NuevoOrdenForm";
-import Login from "./components/auth/Login";
 import { AuthProvider } from "./context/AuthContext";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import ProtectedRoute from "./components/auth/ProtectedRoutes.jsx";
+import { useAuth } from "./context/useAuth";
+import Login from "./components/auth/Login";
+import ProtectedRoute from "./components/auth/ProtectedRoutes";
+import Layout from "./components/layout/Layout";
+import { AdminPage, DashboardPage, DriversPage, FuelTicketsPage, TripsPage, VehiclesPage, WorkOrdersPage } from "./components/pages/OperationsPages";
 
-function App() {
-  return (
-    <AuthProvider>
-      <ToastContainer />
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="login" element={<Login />} />
-          <Route
-            path="vehiculos"
-            element={
-              // <ProtectedRoute>
-              <Vehiculos />
-              // </ProtectedRoute>
-            }
-          />
-          <Route path="vehiculos/nuevoVehiculo" element={<NuevoVehiculo />} />
-          <Route path="viajes" element={<Viajes />} />
-          <Route path="viajes/nuevoViaje" element={<NuevoViaje />} />
-          <Route path="choferes" element={<Choferes />} />
-          <Route path="choferes/nuevoChofer" element={<NuevoChofer />} />
-          <Route path="consumos" element={<Consumos />} />
-          <Route path="consumos/tickets" element={<Tickets />} />
-          <Route path="consumos/tickets/nuevo" element={<NuevoTicket />} />
-          <Route path="consumos/tickets/:id" element={<TicketDetalle />} />
-          <Route path="choferes/editar/:id" element={<ChoferEditar />} />
-          <Route path="vehiculos/editar/:id" element={<VehiculoEditar />} />
-          <Route path="viajes/editar/:id" element={<ViajeEditar />} />
-          <Route path="ordenesTaller" element={<OrdenesTaller />} />
-          <Route path="ordenesTaller/nuevaOrden" element={<NuevaOrden />} />
-          <Route path="ordenesTaller/editar/:id" element={<OrdenEditar />} />
-          <Route path="ordenesTaller/:id" element={<OrdenDetalle />} />
-          <Route path="consumos/tickets/editar/:id" element={<TicketEditar />} />
-          <Route path="adminPanel" element={<AdminPanel />} />
-        </Route>
-      </Routes>
-    </AuthProvider>
-  );
+function PlatformRedirect() {
+  const { logout } = useAuth();
+  const url = import.meta.env.VITE_PLATFORM_CONSOLE_URL;
+  if (url) { window.location.replace(url); return null; }
+  return <main className="login-page"><div className="login-card shadow"><h1 className="h4">Consola de plataforma</h1><p>La cuenta es superadministradora. Configura VITE_PLATFORM_CONSOLE_URL para abrir la consola independiente.</p><button className="btn btn-outline-primary" onClick={logout}>Cerrar sesion</button></div></main>;
 }
 
-export default App;
+export default function App() {
+  return <AuthProvider><Routes><Route path="/login" element={<Login />} /><Route path="/platform" element={<PlatformRedirect />} /><Route element={<ProtectedRoute />}><Route element={<Layout />}><Route index element={<DashboardPage />} /><Route element={<ProtectedRoute permission="trips.read" />}><Route path="viajes" element={<TripsPage />} /></Route><Route element={<ProtectedRoute permission="vehicles.read" />}><Route path="vehiculos" element={<VehiclesPage />} /></Route><Route element={<ProtectedRoute permission="drivers.read" />}><Route path="choferes" element={<DriversPage />} /></Route><Route element={<ProtectedRoute permission="fuel_tickets.read" />}><Route path="combustible" element={<FuelTicketsPage />} /></Route><Route element={<ProtectedRoute permission="work_orders.read" />}><Route path="taller" element={<WorkOrdersPage />} /></Route><Route path="admin" element={<AdminPage />} /></Route></Route><Route path="*" element={<Login />} /></Routes></AuthProvider>;
+}

@@ -1,102 +1,11 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { login } from "../../services/auth";
+import { useState } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/useAuth";
 
 export default function Login() {
-  const navigate = useNavigate();
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    if (user) navigate("/");
-  }, [user, navigate]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    if (!userName) {
-      setError("El usuario es requerido");
-      return;
-    }
-    if (!password) {
-      setError("La contraseña es requerida");
-      return;
-    }
-
-    try {
-      console.log("Attempting login with:", { userName, password });
-      const data = await login(userName, password);
-      console.log("Login successful:", data);
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("token_exp", Date.now() + 8 * 60 * 60 * 1000); // 8 hours expiration
-      setUser(data.user);
-    } catch (err) {
-      console.error("Login failed:", err);
-      setError(err.message || "Error al iniciar sesión");
-    }
-  };
-
-  const logout = (navigate) => {
-    console.log("Logging out user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("token_exp");
-    setUser(null);
-    navigate("/login");
-  };
-
-  return (
-    <div className="container mt-4">
-      <div className="row justify-content-center">
-        <div className="col-sm-10 col-md-6">
-          <div className="card shadow">
-            <div className="card-body">
-              <h3 className="mb-3">Iniciar sesión</h3>
-              {error && <div className="alert alert-danger">{error}</div>}
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Usuario</label>
-                  <input
-                    name="username"
-                    type="text"
-                    className="form-control"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Contraseña</label>
-                  <input
-                    name="password"
-                    type="password"
-                    className="form-control"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="d-flex justify-content-between">
-                  <button className="btn btn-primary" type="submit">
-                    Entrar
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    // onClick={() => navigate(-1)}
-                    onClick={() => logout(navigate)}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const { user, login } = useAuth(); const navigate = useNavigate(); const location = useLocation();
+  const [email, setEmail] = useState(""); const [password, setPassword] = useState(""); const [error, setError] = useState(""); const [sending, setSending] = useState(false);
+  if (user) return <Navigate to={user.isPlatformAdmin ? "/platform" : "/"} replace />;
+  const submit = async (event) => { event.preventDefault(); setSending(true); setError(""); try { const account = await login(email, password); navigate(account.isPlatformAdmin ? "/platform" : location.state?.from?.pathname || "/", { replace: true }); } catch (value) { setError(value.message || "No se pudo iniciar sesion."); } finally { setSending(false); } };
+  return <main className="login-page"><form className="login-card shadow" onSubmit={submit}><h1 className="h3 mb-3">Gestion de flota</h1><p className="text-muted">Inicia sesion con tu correo.</p>{error && <div className="alert alert-danger">{error}</div>}<label className="form-label">Correo electronico</label><input className="form-control mb-3" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" /><label className="form-label">Contrasena</label><input className="form-control mb-3" type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="current-password" /><button className="btn btn-primary w-100" disabled={sending}>{sending ? "Ingresando..." : "Ingresar"}</button></form></main>;
 }
