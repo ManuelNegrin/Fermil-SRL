@@ -12,10 +12,20 @@ export function AuthProvider({ children }) {
   const logout = useCallback(() => { clearSession(); setSession(null); }, []);
   const login = useCallback(async (email, password) => {
     const result = await loginRequest(email, password);
-    const profile = await getCurrentUser();
-    const nextSession = { token: result.token, user: { ...result.user, ...profile } };
-    saveSession(nextSession); setSession(nextSession);
-    return nextSession.user;
+    const provisionalSession = { token: result.token, user: result.user };
+
+    // apiFetch reads the token from storage. Persist it before /me so that
+    // the first authenticated request includes Authorization.
+    saveSession(provisionalSession);
+    try {
+      const profile = await getCurrentUser();
+      const nextSession = { token: result.token, user: { ...result.user, ...profile } };
+      saveSession(nextSession); setSession(nextSession);
+      return nextSession.user;
+    } catch (error) {
+      clearSession();
+      throw error;
+    }
   }, []);
 
   useEffect(() => {
