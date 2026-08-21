@@ -32,20 +32,18 @@ export function UserAdministrationPage() {
   const [editing, setEditing] = useState(null);
 
   const load = useCallback(async () => {
-    try {
-      const [organizationData, usersData, roleData, auditData] = await Promise.all([
+    const results = await Promise.allSettled([
         hasPermission("organization.read") ? apiFetch("/api/admin/organization") : null,
         apiFetch("/api/admin/users"),
         apiFetch("/api/admin/users/roles"),
         hasPermission("audit.read") ? apiFetch("/api/admin/organization/audit") : [],
-      ]);
-      setOrganization(organizationData);
-      setUsers(usersData);
-      setRoles(roleData);
-      setAudit(auditData);
-    } catch (value) {
-      fail(value);
-    }
+    ]);
+    const [organizationResult, usersResult, rolesResult, auditResult] = results;
+    if (organizationResult.status === "fulfilled") setOrganization(organizationResult.value);
+    if (usersResult.status === "fulfilled") setUsers(usersResult.value);
+    if (rolesResult.status === "fulfilled") setRoles(rolesResult.value);
+    if (auditResult.status === "fulfilled") setAudit(auditResult.value);
+    for (const result of results) if (result.status === "rejected") fail(result.reason);
   }, [hasPermission]);
 
   useEffect(() => { load(); }, [load]);
