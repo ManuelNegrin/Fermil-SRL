@@ -4,8 +4,9 @@ import { useAuth } from "./context/useAuth";
 import Login from "./components/auth/Login";
 import ProtectedRoute from "./components/auth/ProtectedRoutes";
 import Layout from "./components/layout/Layout";
-import { DashboardPage, DriversPage, FuelTicketsPage, TripsPage, VehiclesPage, WorkOrdersPage } from "./components/pages/OperationsPages";
+import { DashboardPage, DriversPage, FuelTicketsPage, VehiclesPage } from "./components/pages/OperationsPages";
 import { ProfilePage, UserAdministrationPage } from "./components/pages/AdministrationPages";
+import { TripsPage, WorkOrdersPage } from "./components/pages/TripAndWorkshopPages";
 
 function PlatformRedirect() {
   const { logout } = useAuth();
