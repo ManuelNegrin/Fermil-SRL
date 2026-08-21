@@ -4,9 +4,10 @@ import { useAuth } from "./context/useAuth";
 import Login from "./components/auth/Login";
 import ProtectedRoute from "./components/auth/ProtectedRoutes";
 import Layout from "./components/layout/Layout";
-import { DashboardPage, DriversPage, FuelTicketsPage, VehiclesPage } from "./components/pages/OperationsPages";
+import { DashboardPage, DriversPage, FuelTicketsPage } from "./components/pages/OperationsPages";
 import { ProfilePage, UserAdministrationPage } from "./components/pages/AdministrationPages";
 import { TripsPage, WorkOrdersPage } from "./components/pages/TripAndWorkshopPages";
+import { TripDetailPage, VehiclesPage } from "./components/pages/FleetPages";
 
 function PlatformRedirect() {
   const { logout } = useAuth();
@@ -30,7 +31,7 @@ export default function App() {
     <Route element={<ProtectedRoute />}>
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route element={<ProtectedRoute permission="trips.read" />}><Route path="viajes" element={<TripsPage />} /></Route>
+        <Route element={<ProtectedRoute permission="trips.read" />}><Route path="viajes" element={<TripsPage />} /><Route path="viajes/:id" element={<TripDetailPage />} /></Route>
         <Route element={<ProtectedRoute permission="vehicles.read" />}><Route path="vehiculos" element={<VehiclesPage />} /></Route>
         <Route element={<ProtectedRoute permission="drivers.read" />}><Route path="choferes" element={<DriversPage />} /></Route>
         <Route element={<ProtectedRoute permission="fuel_tickets.read" />}><Route path="combustible" element={<FuelTicketsPage />} /></Route>
