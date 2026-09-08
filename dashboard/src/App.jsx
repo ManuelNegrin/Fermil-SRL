@@ -4,10 +4,11 @@ import { useAuth } from "./context/useAuth";
 import Login from "./components/auth/Login";
 import ProtectedRoute from "./components/auth/ProtectedRoutes";
 import Layout from "./components/layout/Layout";
-import { DashboardPage, DriversPage, FuelTicketsPage } from "./components/pages/OperationsPages";
+import { DashboardPage } from "./components/pages/OperationsPages";
 import { ProfilePage, UserAdministrationPage } from "./components/pages/AdministrationPages";
-import { TripsPage, WorkOrdersPage } from "./components/pages/TripAndWorkshopPages";
-import { TripDetailPage, VehiclesPage } from "./components/pages/FleetPages";
+import { TripsPage, WorkOrderDetailPage, WorkOrdersPage } from "./components/pages/TripAndWorkshopPages";
+import { TripDetailPage, VehicleDetailPage, VehiclesPage } from "./components/pages/FleetPages";
+import { DriverDetailPage, DriversPage, FuelTicketDetailPage, FuelTicketsPage } from "./components/pages/ManagementPages";
 
 function PlatformRedirect() {
   const { logout } = useAuth();
@@ -32,10 +33,10 @@ export default function App() {
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route element={<ProtectedRoute permission="trips.read" />}><Route path="viajes" element={<TripsPage />} /><Route path="viajes/:id" element={<TripDetailPage />} /></Route>
-        <Route element={<ProtectedRoute permission="vehicles.read" />}><Route path="vehiculos" element={<VehiclesPage />} /></Route>
-        <Route element={<ProtectedRoute permission="drivers.read" />}><Route path="choferes" element={<DriversPage />} /></Route>
-        <Route element={<ProtectedRoute permission="fuel_tickets.read" />}><Route path="combustible" element={<FuelTicketsPage />} /></Route>
-        <Route element={<ProtectedRoute permission="work_orders.read" />}><Route path="taller" element={<WorkOrdersPage />} /></Route>
+        <Route element={<ProtectedRoute permission="vehicles.read" />}><Route path="vehiculos" element={<VehiclesPage />} /><Route path="vehiculos/:id" element={<VehicleDetailPage />} /></Route>
+        <Route element={<ProtectedRoute permission="drivers.read" />}><Route path="choferes" element={<DriversPage />} /><Route path="choferes/:id" element={<DriverDetailPage />} /></Route>
+        <Route element={<ProtectedRoute permission="fuel_tickets.read" />}><Route path="combustible" element={<FuelTicketsPage />} /><Route path="combustible/:id" element={<FuelTicketDetailPage />} /></Route>
+        <Route element={<ProtectedRoute permission="work_orders.read" />}><Route path="taller" element={<WorkOrdersPage />} /><Route path="taller/:id" element={<WorkOrderDetailPage />} /></Route>
         <Route path="perfil" element={<ProfilePage />} />
         <Route element={<ProtectedRoute permission="users.manage" />}><Route path="admin" element={<UserAdministrationPage />} /></Route>
       </Route>
