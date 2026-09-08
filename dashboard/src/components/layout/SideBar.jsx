@@ -18,7 +18,10 @@ export default function SideBar() {
   const navigate = useNavigate();
   return (
     <aside className="sidebar p-3">
-      <div className="sidebar-brand">FIXORIS Fleet Management</div>
+      <div className="sidebar-brand">
+        <div>FIXORIS</div>
+        <div>Fleet Management</div>
+      </div>
       <div className="small text-white-50 mb-3">{user?.fullName}</div>
       <nav className="nav nav-pills flex-column gap-1">
         {links
