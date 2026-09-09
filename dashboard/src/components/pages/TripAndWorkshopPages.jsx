@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { apiFetch } from "../../services/api";
+import { confirmToast } from "../ConfirmationToast";
 
 const statuses = { pending: "Pendiente", in_progress: "En curso", completed: "Completado", cancelled: "Cancelado" };
 const fail = (value) => toast.error(value.message || "No se pudo completar la solicitud.");
@@ -15,6 +16,7 @@ const emptyTrip = {
   departureAt: "", arrivalAt: "", cargoType: "refrigerated", containerNumber: "", rotation: "", notes: "", status: "pending",
 };
 const emptyWorkOrder = { vehicleId: "", checkInAt: "", type: "", odometer: "", description: "" };
+const createIdempotencyKey = () => window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 const emptyFilters = { origin: "", destination: "", customerId: "", trailerVehicleId: "", truckVehicleId: "", dateExact: "", dateFrom: "", dateTo: "" };
 const emptyWorkOrderFilters = { search: "", vehicleId: "", status: "", dateExact: "", dateFrom: "", dateTo: "" };
 
@@ -35,6 +37,9 @@ export function TripsPage() {
   const drivers = useCollection("/api/choferes");
   const [form, setForm] = useState(emptyTrip);
   const [editing, setEditing] = useState(null);
+  const [idempotencyKey, setIdempotencyKey] = useState(createIdempotencyKey);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitLock = useRef(false);
   const [truckAssignments, setTruckAssignments] = useState({});
   const [filters, setFilters] = useState(emptyFilters);
 
@@ -57,7 +62,7 @@ export function TripsPage() {
   const refresh = async () => { await Promise.all([trips.refresh(), customers.refresh(), vehicles.refresh(), drivers.refresh()]); };
 
   const set = (field, value) => setForm((current) => ({ ...current, [field]: value }));
-  const reset = () => { setEditing(null); setForm(emptyTrip); };
+  const reset = () => { setEditing(null); setForm(emptyTrip); setIdempotencyKey(createIdempotencyKey()); };
   const setFilter = (field, value) => setFilters((current) => ({ ...current, [field]: value }));
   const selectOptions = (items, selectedId) => items.some((item) => item.id === selectedId) ? items : [...items, ...vehicles.items.filter((item) => item.id === selectedId)];
   const customersForForm = activeCustomers.some((item) => item.id === form.customerId) ? activeCustomers : [...activeCustomers, ...customers.items.filter((item) => item.id === form.customerId)];
@@ -67,14 +72,18 @@ export function TripsPage() {
   const prepare = () => ({ ...form, truckVehicleId: form.truckVehicleId || null, arrivalAt: form.arrivalAt || null, containerNumber: form.cargoType === "container" ? form.containerNumber : null });
   const submit = async (event) => {
     event.preventDefault();
+    if (submitLock.current) return;
+    submitLock.current = true;
+    setIsSubmitting(true);
     try {
       const body = prepare();
-      if (editing) { await apiFetch(`/api/viajes/${editing.id}`, { method: "PUT", body }); toast.success("Viaje actualizado."); }
-      else { await apiFetch("/api/viajes", { method: "POST", body: { ...body, status: "pending" } }); toast.success("Viaje creado. El remolque quedó En viaje."); }
-      reset(); refresh();
-    } catch (value) { fail(value); }
+      if (editing) { toast.info("Actualizando viaje..."); await apiFetch(`/api/viajes/${editing.id}`, { method: "PUT", body }); toast.success("Viaje actualizado."); }
+      else { await apiFetch("/api/viajes", { method: "POST", headers: { "Idempotency-Key": idempotencyKey }, body: { ...body, status: "pending" } }); toast.success("Viaje creado. El remolque quedó En viaje."); }
+      reset(); await refresh();
+    } catch (value) { fail(value); } finally { submitLock.current = false; setIsSubmitting(false); }
   };
   const edit = (trip) => {
+    toast.info("Editando viaje.");
     setEditing(trip);
     setForm({
       customerId: trip.customerId || "", trailerVehicleId: trip.trailerVehicleId || "", truckVehicleId: trip.truckVehicleId || "", driverId: trip.driverId || "",
@@ -83,6 +92,7 @@ export function TripsPage() {
     });
   };
   const updateTrip = async (id, body, message) => {
+    toast.info("Actualizando viaje...");
     try { await apiFetch(`/api/viajes/${id}`, { method: "PUT", body }); toast.success(message); refresh(); } catch (value) { fail(value); }
   };
   const assignTruck = (trip) => {
@@ -96,10 +106,9 @@ export function TripsPage() {
     updateTrip(trip.id, { truckVehicleId, status: "in_progress" }, "Viaje iniciado. Camion y remolque quedaron En viaje.");
   };
   const complete = (trip) => updateTrip(trip.id, { status: "completed", arrivalAt: new Date().toISOString().slice(0, 10) }, "Viaje completado. Las unidades fueron liberadas.");
-  const cancel = async (trip) => {
-    if (!window.confirm(`Cancelar el viaje ${trip.origin} - ${trip.destination}?`)) return;
+  const cancel = (trip) => confirmToast(`¿Cancelar el viaje ${trip.rotation ? `Virada ${trip.rotation} · ` : ""}${trip.origin} - ${trip.destination}?`, async () => {
     try { await apiFetch(`/api/viajes/${trip.id}`, { method: "DELETE" }); toast.success("Viaje cancelado. Las unidades fueron liberadas."); refresh(); } catch (value) { fail(value); }
-  };
+  });
 
   return <>
     <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4"><h1 className="h3 mb-0">Viajes</h1><button className="btn btn-outline-primary" onClick={refresh}>Actualizar</button></div>
@@ -118,9 +127,35 @@ export function TripsPage() {
         <input className="form-control mb-2" placeholder="Virada / rotacion" value={form.rotation} onChange={(event) => set("rotation", event.target.value)} />
         <textarea className="form-control mb-2" placeholder="Notas" value={form.notes} onChange={(event) => set("notes", event.target.value)} />
         {editing && <><select className="form-select mb-2" value={form.status} onChange={(event) => set("status", event.target.value)}><option value="pending">Pendiente</option><option value="in_progress">En curso</option><option value="completed">Completado</option><option value="cancelled">Cancelado</option></select>{form.status === "completed" && <input className="form-control mb-2" type="date" value={form.arrivalAt} onChange={(event) => set("arrivalAt", event.target.value)} />}</>}
-        <div className="d-flex gap-2"><button className="btn btn-primary">{editing ? "Guardar cambios" : "Crear viaje"}</button>{editing && <button type="button" className="btn btn-outline-secondary" onClick={reset}>Cancelar</button>}</div>
+        <div className="d-flex gap-2"><button className="btn btn-primary" type="submit" disabled={isSubmitting}>{isSubmitting ? (editing ? "Guardando..." : "Creando viaje...") : (editing ? "Guardar cambios" : "Crear viaje")}</button>{editing && <button type="button" className="btn btn-outline-secondary" onClick={reset} disabled={isSubmitting}>Cancelar</button>}</div>
       </form></div>
-      <div className="col-lg-8"><div className="card card-body shadow-sm mb-3"><div className="row g-2"><div className="col-md-6"><input className="form-control" placeholder="Filtrar por origen" value={filters.origin} onChange={(event) => setFilter("origin", event.target.value)} /></div><div className="col-md-6"><input className="form-control" placeholder="Filtrar por destino" value={filters.destination} onChange={(event) => setFilter("destination", event.target.value)} /></div><div className="col-md-6"><select className="form-select" value={filters.trailerVehicleId} onChange={(event) => setFilter("trailerVehicleId", event.target.value)}><option value="">Todos los remolques</option>{vehicles.items.filter((item) => item.type === "trailer").map((item) => <option key={item.id} value={item.id}>{item.licensePlate}</option>)}</select></div><div className="col-md-6"><select className="form-select" value={filters.truckVehicleId} onChange={(event) => setFilter("truckVehicleId", event.target.value)}><option value="">Todos los camiones</option>{vehicles.items.filter((item) => item.type === "truck").map((item) => <option key={item.id} value={item.id}>{item.licensePlate}</option>)}</select></div><div className="col-md-4"><label className="form-label small mb-1">Fecha puntual</label><input className="form-control" type="date" value={filters.dateExact} onChange={(event) => setFilter("dateExact", event.target.value)} /></div><div className="col-md-4"><label className="form-label small mb-1">Desde</label><input className="form-control" type="date" disabled={Boolean(filters.dateExact)} value={filters.dateFrom} onChange={(event) => setFilter("dateFrom", event.target.value)} /></div><div className="col-md-4"><label className="form-label small mb-1">Hasta</label><input className="form-control" type="date" disabled={Boolean(filters.dateExact)} value={filters.dateTo} onChange={(event) => setFilter("dateTo", event.target.value)} /></div></div><button className="btn btn-sm btn-outline-secondary mt-3 align-self-start" onClick={() => setFilters(emptyFilters)}>Limpiar filtros</button></div><div className="card shadow-sm table-responsive"><table className="table mb-0"><thead><tr><th>Ruta</th><th>Recursos</th><th>Carga</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{filteredTrips.map((trip) => <tr key={trip.id}><td><strong>{trip.origin} - {trip.destination}</strong><br /><small>{displayDate(trip.departureAt)}</small></td><td>{trip.trailer?.licensePlate || "-"}<br />{trip.truck?.licensePlate || "Sin camion"}</td><td>{trip.cargoType === "container" ? `Contenedor ${trip.containerNumber}` : "Camara de frio"}</td><td>{statuses[trip.status]}</td><td className="text-nowrap"><button className="btn btn-sm btn-outline-secondary me-1 mb-1" onClick={() => navigate(`/viajes/${trip.id}`)}>Detalle</button>{trip.status === "pending" && !trip.truckVehicleId && <div className="d-flex gap-1 mb-1"><select className="form-select form-select-sm" value={truckAssignments[trip.id] || ""} onChange={(event) => setTruckAssignments({ ...truckAssignments, [trip.id]: event.target.value })}><option value="">Camion</option>{availableTrucks.map((truck) => <option key={truck.id} value={truck.id}>{truck.licensePlate}</option>)}</select><button className="btn btn-sm btn-outline-primary" onClick={() => assignTruck(trip)}>Asignar</button></div>}<button className="btn btn-sm btn-outline-primary me-1 mb-1" onClick={() => edit(trip)}>Editar</button>{trip.status === "pending" && <button className="btn btn-sm btn-success me-1 mb-1" onClick={() => start(trip)}>Iniciar</button>}{trip.status === "in_progress" && <button className="btn btn-sm btn-success me-1 mb-1" onClick={() => complete(trip)}>Completar</button>}{!(["completed", "cancelled"].includes(trip.status)) && <button className="btn btn-sm btn-outline-danger mb-1" onClick={() => cancel(trip)}>Cancelar</button>}</td></tr>)}{!filteredTrips.length && <tr><td colSpan="5" className="text-muted">No hay viajes que coincidan con los filtros.</td></tr>}</tbody></table></div></div>
+      <div className="col-lg-8">
+        <div className="card card-body shadow-sm mb-3">
+          <div className="row g-2">
+            <div className="col-md-6"><input className="form-control" placeholder="Filtrar por origen" value={filters.origin} onChange={(event) => setFilter("origin", event.target.value)} /></div>
+            <div className="col-md-6"><input className="form-control" placeholder="Filtrar por destino" value={filters.destination} onChange={(event) => setFilter("destination", event.target.value)} /></div>
+            <div className="col-md-6"><select className="form-select" value={filters.trailerVehicleId} onChange={(event) => setFilter("trailerVehicleId", event.target.value)}><option value="">Todos los remolques</option>{vehicles.items.filter((item) => item.type === "trailer").map((item) => <option key={item.id} value={item.id}>{item.licensePlate}</option>)}</select></div>
+            <div className="col-md-6"><select className="form-select" value={filters.truckVehicleId} onChange={(event) => setFilter("truckVehicleId", event.target.value)}><option value="">Todos los camiones</option>{vehicles.items.filter((item) => item.type === "truck").map((item) => <option key={item.id} value={item.id}>{item.licensePlate}</option>)}</select></div>
+            <div className="col-md-4"><label className="form-label small mb-1">Fecha puntual</label><input className="form-control" type="date" value={filters.dateExact} onChange={(event) => setFilter("dateExact", event.target.value)} /></div>
+            <div className="col-md-4"><label className="form-label small mb-1">Desde</label><input className="form-control" type="date" disabled={Boolean(filters.dateExact)} value={filters.dateFrom} onChange={(event) => setFilter("dateFrom", event.target.value)} /></div>
+            <div className="col-md-4"><label className="form-label small mb-1">Hasta</label><input className="form-control" type="date" disabled={Boolean(filters.dateExact)} value={filters.dateTo} onChange={(event) => setFilter("dateTo", event.target.value)} /></div>
+          </div>
+          <button className="btn btn-sm btn-outline-secondary mt-3 align-self-start" onClick={() => setFilters(emptyFilters)}>Limpiar filtros</button>
+        </div>
+        <div className="card shadow-sm table-responsive">
+          <table className="table mb-0">
+            <thead><tr><th>Ruta</th><th>Virada</th><th>Recursos</th><th>Carga</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody>{filteredTrips.map((trip) => <tr key={trip.id}>
+              <td><strong>{trip.origin} - {trip.destination}</strong><br /><small>{displayDate(trip.departureAt)}</small></td>
+              <td>{trip.rotation || "-"}</td>
+              <td>{trip.trailer?.licensePlate || "-"}<br />{trip.truck?.licensePlate || "Sin camion"}</td>
+              <td>{trip.cargoType === "container" ? `Contenedor ${trip.containerNumber}` : "Camara de frio"}</td>
+              <td>{statuses[trip.status]}</td>
+              <td className="text-nowrap"><button className="btn btn-sm btn-outline-secondary me-1 mb-1" onClick={() => navigate(`/viajes/${trip.id}`)}>Detalle</button>{trip.status === "pending" && !trip.truckVehicleId && <div className="d-flex gap-1 mb-1"><select className="form-select form-select-sm" value={truckAssignments[trip.id] || ""} onChange={(event) => setTruckAssignments({ ...truckAssignments, [trip.id]: event.target.value })}><option value="">Camion</option>{availableTrucks.map((truck) => <option key={truck.id} value={truck.id}>{truck.licensePlate}</option>)}</select><button className="btn btn-sm btn-outline-primary" onClick={() => assignTruck(trip)}>Asignar</button></div>}<button className="btn btn-sm btn-outline-primary me-1 mb-1" onClick={() => edit(trip)}>Editar</button>{trip.status === "pending" && <button className="btn btn-sm btn-success me-1 mb-1" onClick={() => start(trip)}>Iniciar</button>}{trip.status === "in_progress" && <button className="btn btn-sm btn-success me-1 mb-1" onClick={() => complete(trip)}>Completar</button>}{!(["completed", "cancelled"].includes(trip.status)) && <button className="btn btn-sm btn-outline-danger mb-1" onClick={() => cancel(trip)}>Cancelar</button>}</td>
+            </tr>)}{!filteredTrips.length && <tr><td colSpan="6" className="text-muted">No hay viajes que coincidan con los filtros.</td></tr>}</tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </>;
 }
@@ -150,12 +185,12 @@ export function WorkOrdersPage() {
   };
   const updateStatus = async (order) => {
     const status = draftStatuses[order.id] || order.status;
+    toast.info("Actualizando orden de taller...");
     try { await apiFetch(`/api/ordenes-taller/${order.id}`, { method: "PUT", body: { status, ...(status === "completed" ? { checkOutAt: new Date().toISOString().slice(0, 10) } : {}) } }); toast.success(status === "completed" ? "Orden completada. El vehiculo esta Disponible." : "Estado de orden actualizado."); refresh(); } catch (value) { fail(value); }
   };
-  const cancel = async (order) => {
-    if (!window.confirm("Cancelar esta orden de taller?")) return;
+  const cancel = (order) => confirmToast("¿Cancelar esta orden de taller?", async () => {
     try { await apiFetch(`/api/ordenes-taller/${order.id}`, { method: "DELETE" }); toast.success("Orden cancelada."); refresh(); } catch (value) { fail(value); }
-  };
+  });
   const setFilter = (field, value) => setFilters((current) => ({ ...current, [field]: value }));
   return <><div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4"><h1 className="h3 mb-0">Ordenes de taller</h1><button className="btn btn-outline-primary" onClick={refresh}>Actualizar</button></div><div className="row g-4"><div className="col-lg-4"><form className="card card-body shadow-sm" onSubmit={submit}><h2 className="h5">Nueva orden</h2><select className="form-select mb-2" value={form.vehicleId} onChange={(event) => setForm({ ...form, vehicleId: event.target.value })} required><option value="">Vehiculo *</option>{vehicles.items.filter((vehicle) => vehicle.status === "available" || vehicle.status === "in_service" || vehicle.status === "maintenance").map((vehicle) => <option key={vehicle.id} value={vehicle.id}>{vehicle.licensePlate}</option>)}</select><input className="form-control mb-2" type="date" value={form.checkInAt} onChange={(event) => setForm({ ...form, checkInAt: event.target.value })} required /><input className="form-control mb-2" placeholder="Tipo de trabajo" value={form.type} onChange={(event) => setForm({ ...form, type: event.target.value })} /><input className="form-control mb-2" type="number" placeholder="Odometro" value={form.odometer} onChange={(event) => setForm({ ...form, odometer: event.target.value })} /><textarea className="form-control mb-3" placeholder="Descripcion *" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} required /><button className="btn btn-primary">Crear orden</button></form></div><div className="col-lg-8"><div className="card card-body shadow-sm mb-3"><div className="row g-2"><div className="col-md-5"><input className="form-control" placeholder="Buscar por vehiculo, tipo o descripcion" value={filters.search} onChange={(event) => setFilter("search", event.target.value)} /></div><div className="col-md-4"><select className="form-select" value={filters.vehicleId} onChange={(event) => setFilter("vehicleId", event.target.value)}><option value="">Todos los vehiculos</option>{vehicles.items.map((vehicle) => <option key={vehicle.id} value={vehicle.id}>{vehicle.licensePlate}</option>)}</select></div><div className="col-md-3"><select className="form-select" value={filters.status} onChange={(event) => setFilter("status", event.target.value)}><option value="">Todos los estados</option><option value="pending">Pendiente</option><option value="in_progress">En curso</option><option value="completed">Completado</option><option value="cancelled">Cancelado</option></select></div><div className="col-md-4"><label className="form-label small mb-1">Fecha puntual</label><input className="form-control" type="date" value={filters.dateExact} onChange={(event) => setFilter("dateExact", event.target.value)} /></div><div className="col-md-4"><label className="form-label small mb-1">Desde</label><input className="form-control" type="date" disabled={Boolean(filters.dateExact)} value={filters.dateFrom} onChange={(event) => setFilter("dateFrom", event.target.value)} /></div><div className="col-md-4"><label className="form-label small mb-1">Hasta</label><input className="form-control" type="date" disabled={Boolean(filters.dateExact)} value={filters.dateTo} onChange={(event) => setFilter("dateTo", event.target.value)} /></div></div><button className="btn btn-sm btn-outline-secondary mt-3 align-self-start" onClick={() => setFilters(emptyWorkOrderFilters)}>Limpiar filtros</button></div><div className="card shadow-sm table-responsive"><table className="table mb-0"><thead><tr><th>Vehiculo</th><th>Ingreso</th><th>Descripcion</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{filteredOrders.map((order) => <tr key={order.id}><td>{order.vehicle?.licensePlate || "-"}</td><td>{displayDate(order.checkInAt)}</td><td>{order.description}</td><td>{statuses[order.status]}</td><td className="text-nowrap"><button className="btn btn-sm btn-outline-secondary me-1" onClick={() => navigate(`/taller/${order.id}`)}>Detalle</button>{!(["completed", "cancelled"].includes(order.status)) && <><select className="form-select form-select-sm d-inline-block w-auto me-1" value={draftStatuses[order.id] || order.status} onChange={(event) => setDraftStatuses({ ...draftStatuses, [order.id]: event.target.value })}><option value="pending">Pendiente</option><option value="in_progress">En curso</option><option value="completed">Completado</option></select><button className="btn btn-sm btn-success me-1" onClick={() => updateStatus(order)}>Guardar</button><button className="btn btn-sm btn-outline-danger" onClick={() => cancel(order)}>Cancelar</button></>}</td></tr>)}{!filteredOrders.length && <tr><td colSpan="5" className="text-muted">No hay ordenes que coincidan con los filtros.</td></tr>}</tbody></table></div></div></div></>;
 }

@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../../context/useAuth";
 import { apiFetch } from "../../services/api";
 import { changeOwnPassword } from "../../services/auth";
+import { confirmToast } from "../ConfirmationToast";
 
 const roleLabels = {
   Administrator: "Administrador",
@@ -54,6 +55,7 @@ export function UserAdministrationPage() {
   };
 
   const startEdit = (item) => {
+    toast.info("Editando usuario.");
     setEditing(item);
     setForm({
       fullName: item.fullName,
@@ -75,6 +77,7 @@ export function UserAdministrationPage() {
     event.preventDefault();
     try {
       if (editing) {
+        toast.info("Actualizando usuario...");
         await apiFetch(`/api/admin/users/${editing.id}`, {
           method: "PUT",
           body: {
@@ -102,8 +105,7 @@ export function UserAdministrationPage() {
     }
   };
 
-  const deactivate = async (item) => {
-    if (!window.confirm(`Desactivar a ${item.fullName}?`)) return;
+  const deactivate = (item) => confirmToast(`¿Desactivar a ${item.fullName}?`, async () => {
     try {
       await apiFetch(`/api/admin/users/${item.id}`, { method: "DELETE" });
       toast.success("Usuario desactivado.");
@@ -111,7 +113,7 @@ export function UserAdministrationPage() {
     } catch (value) {
       fail(value);
     }
-  };
+  });
 
   return <>
     <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
@@ -173,6 +175,7 @@ export function ProfilePage() {
     event.preventDefault();
     if (form.newPassword !== form.confirmation) return toast.error("Las contrasenas no coinciden.");
     try {
+      toast.info("Actualizando contrasena...");
       await changeOwnPassword(form.currentPassword, form.newPassword);
       toast.success("Contrasena actualizada. Inicia sesion nuevamente.");
       logout();
