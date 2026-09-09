@@ -1,4 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./toast.css";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/useAuth";
 import Login from "./components/auth/Login";
@@ -27,7 +30,7 @@ function HomePage() {
 }
 
 export default function App() {
-  return <AuthProvider><Routes>
+  return <><ToastContainer position="top-center" className="app-toast-center" newestOnTop pauseOnFocusLoss={false} /><AuthProvider><Routes>
     <Route path="/login" element={<Login />} />
     <Route path="/platform" element={<PlatformRedirect />} />
     <Route element={<ProtectedRoute />}>
@@ -44,5 +47,5 @@ export default function App() {
       </Route>
     </Route>
     <Route path="*" element={<Login />} />
-  </Routes></AuthProvider>;
+  </Routes></AuthProvider></>;
 }
